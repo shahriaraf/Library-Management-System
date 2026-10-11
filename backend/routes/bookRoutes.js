@@ -1,8 +1,13 @@
 const express = require('express')
 const booksRouter = express.Router()
 
+const os = require('os')
 const multer = require('multer')
-const upload = multer({ dest: 'uploads/' })
+
+// Vercel's filesystem is read-only except /tmp.
+// Locally, keep using the 'uploads/' folder as before.
+const uploadDir = process.env.VERCEL ? os.tmpdir() : 'uploads/'
+const upload = multer({ dest: uploadDir })
 
 const {
   getAllBooks,
