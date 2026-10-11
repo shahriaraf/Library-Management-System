@@ -32,11 +32,13 @@ const adminHomePageInfoRouter = require("./routes/adminHomePageInfoRoute");
 const CustomError = require("./errorHandler/CustomError");
 const PageNotFound = require("./errorHandler/PageNotFound");
 
-// Allow CORS Policy
-// app.use(cors())
-
-// For recieiving httpOnly cookies
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+// For receiving httpOnly cookies
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  })
+);
 
 app.use(cookieParser());
 
@@ -44,9 +46,19 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Make sure the DB is connected before any route runs (serverless-safe)
+app.use(async (req, res, next) => {
+  try {
+    await ConnectDatabase(process.env.CONNECTION_URL);
+    next();
+  } catch (error) {
+    console.log("DATABASE CONNECTION ERROR", error);
+    res.status(500).json({ success: false, message: "Database connection failed" });
+  }
+});
+
 // making uploads folder globally accessable through static routing
 const path = require("path");
-// const { cookie } = require('express/lib/response')
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Middlewares
@@ -119,18 +131,10 @@ app.use("/api/v1/query", QueryRouter);
 app.use(CustomError);
 app.use(PageNotFound);
 
-// Server
-const port = process.env.CONNECTION_PORT || 5000;
-const InitiateServer = async () => {
-  try {
-    await ConnectDatabase(process.env.CONNECTION_URL);
-    console.log("Connected to Database Successfully");
-    app.listen(port, () =>
-      console.log(`server started at port ${port} . . . `)
-    );
-  } catch (error) {
-    console.log("ERROR IN SERVER");
-  }
-};
+// Local server only. On Vercel the exported app is used as the handler.
+if (!process.env.VERCEL) {
+  const port = process.env.CONNECTION_PORT || 5000;
+  app.listen(port, () => console.log(`server started at port ${port} . . . `));
+}
 
-InitiateServer();
+module.exports = app;

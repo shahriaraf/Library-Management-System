@@ -7,8 +7,8 @@ import "bootstrap/dist/js/bootstrap.js";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
-export const backend_server = `http://localhost:5000`;
+// Empty string = same origin. /api and /uploads are proxied to the backend
+// by vite.config.js in dev and by vercel.json in production.
+export const backend_server = "";
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App></App>);
-// <React.StrictMode>
-// </React.StrictMode>

@@ -6,7 +6,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import { BsEye, BsEyeSlash } from 'react-icons/bs'
 
 const AdminSignup = () => {
-  const API_URL = 'http://localhost:5000/api/v1/signup'
+  const API_URL = '/api/v1/signup'
 
   const refUsername = useRef(null)
 
@@ -84,7 +84,7 @@ const AdminSignup = () => {
       // Account is already verified
       if (response.data.GOTO_LOGIN == true) {
         toast('Account already Exists, Goto LOGIN', {
-          icon: 'ℹ️',
+          icon: 'â„¹ï¸',
         })
       } else {
         navigate('/admin/otp', { replace: true })

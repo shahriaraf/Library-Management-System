@@ -1,7 +1,18 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const ConnectDatabase = (connection_url) => {
-  mongoose.connect(connection_url)
-}
+let connectionPromise = null;
 
-module.exports = { ConnectDatabase }
+const ConnectDatabase = async (connection_url) => {
+  if (mongoose.connection.readyState === 1) return;
+  if (!connectionPromise) {
+    connectionPromise = mongoose
+      .connect(connection_url, { serverSelectionTimeoutMS: 10000 })
+      .catch((err) => {
+        connectionPromise = null;
+        throw err;
+      });
+  }
+  await connectionPromise;
+};
+
+module.exports = { ConnectDatabase };

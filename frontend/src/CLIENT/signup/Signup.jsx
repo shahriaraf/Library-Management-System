@@ -6,7 +6,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import { BsEye, BsEyeSlash } from 'react-icons/bs'
 
 const Signup = () => {
-  const API_URL = 'http://localhost:5000/api/v1/signup'
+  const API_URL = '/api/v1/signup'
 
   const refUsername = useRef(null)
 
@@ -43,7 +43,7 @@ const Signup = () => {
       if (!isValid) {
         setLoading(false)
         return toast('Invalid Email Format', {
-          icon: 'ℹ️',
+          icon: 'â„¹ï¸',
         })
       }
 
@@ -56,7 +56,7 @@ const Signup = () => {
         return toast(
           'Password must be alphanumeric and contain at least one special character',
           {
-            icon: 'ℹ️',
+            icon: 'â„¹ï¸',
           }
         )
       }
@@ -64,7 +64,7 @@ const Signup = () => {
       if (textField.password !== textField.confirm_password) {
         setLoading(false)
         return toast('Password doesnt match', {
-          icon: 'ℹ️',
+          icon: 'â„¹ï¸',
         })
       }
 
@@ -90,12 +90,12 @@ const Signup = () => {
       if (response.data.GOTO_LOGIN == true) {
         navigate('/login', { replace: true })
         toast('Account Already Exists , You can Login ! ', {
-          icon: 'ℹ️',
+          icon: 'â„¹ï¸',
         })
       } else {
         navigate('/otp', { replace: true })
         toast(response.data.message, {
-          icon: 'ℹ️',
+          icon: 'â„¹ï¸',
         })
       }
     } catch (error) {
