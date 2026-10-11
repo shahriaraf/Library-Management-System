@@ -1,0 +1,228 @@
+.client-app {
+  --client-bg: #101625;
+  --client-surface: #171f31;
+  --client-surface-raised: #1c263a;
+  --client-border: rgba(157, 171, 202, .14);
+  --client-text: #e5e9f3;
+  --client-muted: #8d99b2;
+  --client-accent: #9b8cff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--client-text);
+  background:
+    radial-gradient(ellipse at 78% 0%, rgba(81, 75, 164, .1), transparent 34%),
+    var(--client-bg);
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 13px;
+}
+.client-app *,
+.client-app *::before,
+.client-app *::after { box-sizing: border-box; }
+.client-content { flex: 1 0 auto; width: 100%; }
+.client-app h1,
+.client-app h2,
+.client-app h3,
+.client-app h4,
+.client-app h5,
+.client-app h6 { color: var(--client-text); }
+.client-app p { color: var(--client-muted); font-size: 13px !important; line-height: 1.65; }
+.client-app a { color: #b8adff; }
+.client-app a:hover { color: #d6d0ff; }
+.client-app .container,
+.client-app .container-fluid { position: relative; }
+.client-app .btn {
+  min-height: 36px;
+  padding: 8px 13px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 600;
+  transition: transform 150ms ease, filter 150ms ease, background-color 150ms ease;
+}
+.client-app .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.client-app .btn:active { transform: translateY(0); }
+.client-app .btn-primary { color: #f2efff; border-color: #7163ce; background: linear-gradient(135deg, #7668d8, #5d51b7); }
+.client-app .btn-primary:hover,
+.client-app .btn-primary:focus { color: #fff; border-color: #9284f3; background: linear-gradient(135deg, #8879e8, #695bd0); }
+.client-app .btn-success { color: #e6fff3; border-color: #258a6a; background: linear-gradient(135deg, #218a69, #207257); }
+.client-app .btn-danger { color: #ffe9ed; border-color: #9e4357; background: linear-gradient(135deg, #b44f64, #8e3b54); }
+.client-app .btn-secondary,
+.client-app .btn-dark { color: #dce2f0; border-color: rgba(158, 174, 206, .2); background: #28334a; }
+
+.client-app .form-control,
+.client-app .form-select,
+.client-app input:not([type='checkbox']):not([type='file']),
+.client-app textarea {
+  min-height: 41px;
+  color: #e2e7f2;
+  border: 1px solid rgba(158, 174, 206, .19);
+  border-radius: 9px;
+  background-color: #141c2c;
+  font-size: 12px;
+  box-shadow: none;
+}
+.client-app textarea { min-height: 110px; }
+.client-app .form-control::placeholder,
+.client-app input::placeholder,
+.client-app textarea::placeholder { color: #687590; opacity: 1; }
+.client-app .form-control:focus,
+.client-app .form-select:focus,
+.client-app input:focus,
+.client-app textarea:focus { color: #f0f2fa; border-color: rgba(153, 137, 255, .67); background-color: #151e30; box-shadow: 0 0 0 3px rgba(133, 115, 255, .12); outline: 0; }
+.client-app .form-label,
+.client-app label { color: #b8c1d4; font-size: 11px; font-weight: 600; }
+.client-app select option { color: var(--client-text); background: #141c2c; }
+.client-app input[type='file'] { color: var(--client-muted); }
+.client-app .form-check-input { border-color: #596780; background-color: #222d43; }
+.client-app .form-check-input:checked { border-color: #8376e9; background-color: #7668dc; }
+
+.client-app .table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  color: var(--client-text);
+  border: 1px solid var(--client-border);
+  border-radius: 12px;
+  background: rgba(20, 28, 44, .78);
+  --bs-table-color: var(--client-text);
+  --bs-table-bg: transparent;
+  --bs-table-border-color: rgba(157, 171, 202, .12);
+  --bs-table-hover-color: #f3f4fb;
+  --bs-table-hover-bg: rgba(133, 119, 255, .06);
+  margin-bottom: 0;
+  scrollbar-color: #3b4560 #151d2c;
+}
+.client-app .table > :not(caption) > * > * {
+  min-width: max-content;
+  padding: 12px 14px;
+  color: inherit;
+  border-bottom-color: rgba(157, 171, 202, .12);
+  background-color: transparent;
+  vertical-align: middle;
+  font-size: 11px;
+}
+.client-app .table thead th { color: #98a5c0; background: rgba(28, 38, 58, .83); font-size: 10px; font-weight: 700; letter-spacing: .04em; white-space: nowrap; }
+.client-app .table tbody tr:last-child > * { border-bottom: 0; }
+.client-app .table tbody th { color: #a99aff; font-weight: 650; }
+
+.client-app .card {
+  overflow: hidden;
+  color: var(--client-text);
+  border: 1px solid var(--client-border);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(25, 34, 53, .98), rgba(19, 27, 43, .98));
+  box-shadow: 0 12px 30px rgba(1, 4, 12, .2);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+.client-app .card:hover { transform: translateY(-3px); border-color: rgba(159, 145, 255, .3); box-shadow: 0 17px 38px rgba(1, 4, 12, .28); }
+.client-app .card-img-top { background: #111827; }
+.client-app .card-body { padding: 15px; white-space: normal; }
+.client-app .card-title { color: #ebedf6; font-size: 13px; font-weight: 650; }
+.client-app .card-text { color: #8f9bb4; font-size: 11px; }
+.client-app .card-body p::before { color: #76829b; }
+
+.client-app .login-maindiv,
+.client-app .signup-maindiv {
+  color: var(--client-text);
+  border: 1px solid var(--client-border);
+  border-radius: 17px;
+  background:
+    radial-gradient(ellipse at 90% 0%, rgba(115, 95, 224, .13), transparent 36%),
+    linear-gradient(145deg, #1a2337, #151d2e);
+  box-shadow: 0 22px 60px rgba(1, 4, 12, .28);
+}
+.client-app .login-maindiv { margin-top: 55px; margin-bottom: 55px; }
+.client-app .login-upperdiv h1,
+.client-app .signup-upperdiv h1 { color: #f0f2fa; font-size: 27px; font-weight: 650; letter-spacing: -.04em; }
+.client-app .login-middlediv,
+.client-app .signup-middlediv { margin-top: 19px; }
+.client-app .login-middlediv input,
+.client-app .signup-middlediv input { min-height: 43px; padding: 10px 12px; color: #e2e7f2; border: 1px solid rgba(158, 174, 206, .19); border-radius: 9px; background: #141c2c; font-size: 12px; }
+.client-app .login-middlediv button,
+.client-app .signup-middlediv button,
+.client-app .login-lowerdiv button,
+.client-app .signup-lowerdiv button { min-height: 39px; padding: 8px 15px; border: 1px solid #7163ce; border-radius: 9px; color: #f2efff; background: linear-gradient(135deg, #7668d8, #5d51b7); font-size: 12px; box-shadow: none; }
+.client-app .login-middlediv button:hover,
+.client-app .signup-middlediv button:hover,
+.client-app .login-lowerdiv button:hover,
+.client-app .signup-lowerdiv button:hover { background: #8173e5; }
+.client-app .login-lowerdiv { align-items: center; margin-top: 8px; }
+.client-app .login-lowerdiv a { color: #a99aff; border: 0; font-size: 11px; }
+.client-app .login-lowerdiv #signupbtn-link { color: inherit; }
+.client-app .signup-lowerdiv { align-items: center; gap: 8px; margin-top: 17px; }
+.client-app .signup-lowerdiv p { margin-bottom: 0; color: #9ba7be; font-size: 11px; }
+.client-app .password-field span { color: #a99aff; }
+
+.client-app .client-profile-page { max-width: 1500px; margin: 0 auto; padding-top: 28px; padding-bottom: 45px; }
+.client-profile-welcome {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 152px;
+  overflow: hidden;
+  margin: 0 12px 24px;
+  padding: 27px 32px;
+  border: 1px solid rgba(146, 131, 255, .22);
+  border-radius: 18px;
+  background:
+    radial-gradient(ellipse at 82% 50%, rgba(120, 89, 255, .2), transparent 38%),
+    linear-gradient(115deg, #171e35 0%, #171d34 56%, #222044 100%);
+  box-shadow: 0 18px 50px rgba(3, 5, 14, .2);
+}
+.client-profile-eyebrow { color: #9388f5; font-size: 9px; font-weight: 700; letter-spacing: .16em; }
+.client-profile-welcome h1 { margin: 9px 0 5px; color: #f2f3fb; font-size: clamp(24px, 2.5vw, 32px); font-weight: 650; letter-spacing: -.045em; }
+.client-profile-welcome p { margin: 0; color: #9aa5be; font-size: 12px; }
+.client-profile-count { min-width: 100px; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 15px; border: 1px solid rgba(195, 185, 255, .18); border-radius: 14px; background: rgba(105, 92, 197, .12); }
+.client-profile-count strong { color: #e8e4ff; font-size: 26px; line-height: 1; }
+.client-profile-count span { color: #9892c8; font-size: 8px; font-weight: 700; letter-spacing: .1em; }
+.client-app .client-sidebar { align-items: flex-start; margin: 0; }
+.client-app .client-sidebar > .client-dashboard-buttons { width: 205px; flex: 0 0 205px; padding: 0 12px; }
+.client-app .client-dashboard-buttons { position: sticky; top: 96px; margin-top: 5px !important; }
+.client-app .client-dashboard-buttons button { width: 100%; min-height: 42px; display: flex; align-items: center; margin: 0 0 7px !important; padding: 0 13px; color: #9aa6bf !important; border: 1px solid transparent !important; border-radius: 10px; background: transparent !important; font-size: 11px; font-weight: 550; text-align: left; transition: color 150ms ease, background 150ms ease, border-color 150ms ease; }
+.client-app .client-dashboard-buttons button:hover { color: #e2ddff !important; border-color: rgba(139, 126, 255, .17) !important; background: rgba(113, 97, 255, .13) !important; }
+.client-app .client-dashboard-buttons button.is-active { color: #d9d5ff !important; border-color: rgba(139, 126, 255, .17) !important; background: linear-gradient(100deg, rgba(113, 97, 255, .2), rgba(91, 115, 255, .08)) !important; box-shadow: inset 2px 0 #9b8cff; }
+.client-app .client-sidebar > .col:not(.client-dashboard-buttons) { min-width: 0; }
+.client-app .profile-details { border: 1px solid var(--client-border) !important; border-radius: 14px; background: linear-gradient(145deg, rgba(25, 34, 53, .95), rgba(19, 27, 43, .95)); box-shadow: 0 12px 35px rgba(1, 4, 12, .2) !important; }
+.client-app .profile-details h5 { color: #cad2e3; font-size: 12px; }
+.client-app .profile-buttons { display: flex; justify-content: center; flex-wrap: wrap; gap: 7px; }
+.client-app .modal-content { color: var(--client-text); border: 1px solid var(--client-border); border-radius: 14px; background: #171f31; }
+.client-app .modal-header,
+.client-app .modal-footer { border-color: var(--client-border); }
+.client-app .modal-header .btn-close { filter: invert(1) grayscale(1); }
+.client-app .modal-title { color: #f0f2f9; }
+.client-app .not-found-container { min-height: 52vh; height: auto; color: var(--client-text); }
+.client-app .not-found-container h1 { color: #f0f2f9; }
+.client-app .not-found-container p { color: var(--client-muted); }
+.client-app #about-heading { border-color: rgba(169, 154, 255, .55); color: #eeeaff; }
+.client-app .aboutus-bottom-section h2 { color: #e1e6f2; font-size: 18px; }
+.client-app .aboutus-bottom-section p { color: #929eb6; font-size: 12px; line-height: 1.8; }
+.client-app .carousel-control-prev-icon,
+.client-app .carousel-control-next-icon { filter: drop-shadow(0 2px 5px #000); }
+.client-app .carousel-indicators [data-bs-target] { background-color: #b4a8ff; }
+.client-app .pagination .page-link { color: #c6bcff; border-color: var(--client-border); background: #192238; }
+.client-app .pagination .active .page-link { color: #fff; border-color: #7668d8; background: #675ac5; }
+.client-app .pagination .disabled .page-link { color: #67738d; background: #141c2c; }
+
+@media (max-width: 900px) {
+  .client-app .client-sidebar > .client-dashboard-buttons { width: 170px; flex-basis: 170px; }
+}
+@media (max-width: 767px) {
+  .client-app .client-profile-page { padding-top: 17px; }
+  .client-profile-welcome { min-height: 135px; margin: 0 0 14px; padding: 22px 19px; }
+  .client-profile-count { min-width: 77px; padding: 12px 9px; }
+  .client-profile-count strong { font-size: 22px; }
+  .client-app .client-sidebar > .client-dashboard-buttons { position: static; width: 100%; flex: 0 0 100%; display: flex; gap: 6px; padding: 0 12px; }
+  .client-app .client-dashboard-buttons button { justify-content: center; min-height: 38px; flex: 1; margin: 0 !important; padding: 0 7px; text-align: center; }
+  .client-app .client-sidebar > .col:not(.client-dashboard-buttons) { width: 100%; margin-top: 8px; }
+  .client-app .login-maindiv { margin: 30px 16px; width: auto; }
+}
+@media (max-width: 500px) {
+  .client-app .client-profile-welcome { align-items: flex-start; }
+  .client-profile-welcome p { max-width: 235px; font-size: 10px; }
+  .client-profile-count { position: absolute; right: 15px; bottom: 14px; }
+  .client-profile-welcome h1 { max-width: 240px; font-size: 22px; }
+  .client-app .client-profile-page { padding-left: 12px; padding-right: 12px; }
+  .client-app .client-sidebar > .client-dashboard-buttons { padding: 0; }
+}

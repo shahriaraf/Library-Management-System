@@ -1,0 +1,192 @@
+.admin-app {
+  --admin-bg: #101625;
+  --admin-panel: #171f31;
+  --admin-panel-raised: #1b2539;
+  --admin-border: rgba(157, 171, 202, 0.14);
+  --admin-text: #e5e9f3;
+  --admin-muted: #8d99b2;
+  --admin-accent: #9b8cff;
+  min-height: 100vh;
+  color: var(--admin-text);
+  background:
+    radial-gradient(ellipse at 75% 7%, rgba(81, 75, 164, 0.12), transparent 35%),
+    var(--admin-bg);
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 13px;
+}
+
+.admin-app *,
+.admin-app *::before,
+.admin-app *::after { box-sizing: border-box; }
+
+.admin-app .admin-layout { display: flex; align-items: stretch; min-height: calc(100vh - 78px); }
+.admin-app .admin-main { flex: 1; min-width: 0; padding: 34px 38px 60px; overflow: hidden; }
+.admin-app .admin-main > .container,
+.admin-app .admin-main .container {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.admin-app h1,
+.admin-app h2,
+.admin-app h3,
+.admin-app h4,
+.admin-app h5,
+.admin-app h6 { color: var(--admin-text); }
+.admin-app h1.h1 { margin: 0 0 22px; font-size: clamp(24px, 2.3vw, 30px); font-weight: 650; letter-spacing: -0.045em; }
+.admin-app p { color: var(--admin-muted); font-size: 13px !important; line-height: 1.6; }
+.admin-app hr { border-color: var(--admin-border); opacity: 1; }
+
+.admin-app .btn {
+  min-height: 36px;
+  padding: 8px 13px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 600;
+  transition: transform 150ms ease, filter 150ms ease, background-color 150ms ease;
+}
+.admin-app .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.admin-app .btn:active { transform: translateY(0); }
+.admin-app .btn-success { color: #e6fff3; border-color: #258a6a; background: linear-gradient(135deg, #218a69, #207257); }
+.admin-app .btn-danger { color: #ffe9ed; border-color: #9e4357; background: linear-gradient(135deg, #b44f64, #8e3b54); }
+.admin-app .btn-primary { color: #f1efff; border-color: #6f62cc; background: linear-gradient(135deg, #7365d6, #5b4db5); }
+.admin-app .btn-secondary,
+.admin-app .btn-dark { color: #dce2f0; border-color: rgba(158, 174, 206, .2); background: #28334a; }
+
+.admin-app .form-control,
+.admin-app .form-select,
+.admin-app input:not([type='checkbox']):not([type='file']),
+.admin-app textarea {
+  min-height: 41px;
+  color: #e2e7f2;
+  border: 1px solid rgba(158, 174, 206, .19);
+  border-radius: 9px;
+  background-color: #141c2c;
+  font-size: 12px;
+  box-shadow: none;
+}
+.admin-app textarea { min-height: 110px; }
+.admin-app .form-control::placeholder,
+.admin-app input::placeholder,
+.admin-app textarea::placeholder { color: #687590; opacity: 1; }
+.admin-app .form-control:focus,
+.admin-app .form-select:focus,
+.admin-app input:focus,
+.admin-app textarea:focus {
+  color: #f0f2fa;
+  border-color: rgba(153, 137, 255, .67);
+  background-color: #151e30;
+  box-shadow: 0 0 0 3px rgba(133, 115, 255, .12);
+  outline: 0;
+}
+.admin-app .form-label,
+.admin-app label { color: #b8c1d4; font-size: 11px; font-weight: 600; }
+.admin-app .form-inline {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+.admin-app .form-inline > .form-control,
+.admin-app .form-inline > .form-select {
+  width: auto;
+  min-width: 135px;
+  flex: 1 1 135px;
+}
+.admin-app .form-inline > div { flex: 0 0 auto; }
+.admin-app .form-check-input { border-color: #596780; background-color: #222d43; }
+.admin-app .form-check-input:checked { border-color: #8376e9; background-color: #7668dc; }
+.admin-app input[type='file'] { color: var(--admin-muted); font-size: 11px; }
+.admin-app select option { color: var(--admin-text); background: #141c2c; }
+
+.admin-app .table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: rgba(20, 28, 44, .78);
+  --bs-table-color: var(--admin-text);
+  --bs-table-bg: transparent;
+  --bs-table-border-color: rgba(157, 171, 202, .12);
+  --bs-table-hover-color: #f3f4fb;
+  --bs-table-hover-bg: rgba(133, 119, 255, .06);
+  margin-bottom: 0;
+  scrollbar-color: #3b4560 #151d2c;
+}
+.admin-app .table > :not(caption) > * > * {
+  min-width: max-content;
+  padding: 12px 14px;
+  color: inherit;
+  border-bottom-color: rgba(157, 171, 202, .12);
+  background-color: transparent;
+  vertical-align: middle;
+  font-size: 11px;
+}
+.admin-app .table thead th { color: #98a5c0; background: rgba(28, 38, 58, .83); font-size: 10px; font-weight: 700; letter-spacing: .04em; white-space: nowrap; }
+.admin-app .table tbody tr:last-child > * { border-bottom: 0; }
+.admin-app .table tbody th { color: #9d91ff; font-weight: 650; }
+.admin-app .table .form-control,
+.admin-app .table .form-select { min-width: 120px; min-height: 34px; padding-top: 5px; padding-bottom: 5px; font-size: 10px; }
+.admin-app .edit-books-btn { color: #d9d3ff !important; border: 1px solid rgba(158, 142, 255, .25); background: rgba(128, 109, 255, .16) !important; }
+.admin-app .delete-books-btn { color: #ffe4e9 !important; border: 1px solid rgba(238, 97, 124, .24); background: rgba(202, 67, 94, .18) !important; }
+
+.admin-app .admin-main .row { --bs-gutter-x: 18px; }
+.admin-app .admin-main .shadow,
+.admin-app .admin-main .shadow-sm { box-shadow: 0 12px 35px rgba(1, 4, 12, .2) !important; }
+.admin-app .profile-details,
+.admin-app .issue-book-form {
+  border: 1px solid var(--admin-border) !important;
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(25, 34, 53, .95), rgba(19, 27, 43, .95));
+}
+.admin-app .profile-details h5 { color: #cbd3e3; font-size: 12px; }
+.admin-app .modal-content { color: var(--admin-text); border: 1px solid var(--admin-border); border-radius: 14px; background: #171f31; }
+.admin-app .modal-header,
+.admin-app .modal-footer { border-color: var(--admin-border); }
+.admin-app .modal-header .btn-close { filter: invert(1) grayscale(1); }
+.admin-app .modal-title { color: #f0f2f9; }
+.admin-app .confirm-alert { color: var(--admin-text); }
+.admin-app .not-found-container { min-height: 55vh; height: auto; }
+.admin-app .not-found-container h1 { margin-bottom: 8px; }
+.admin-app .not-found-container p { color: var(--admin-muted); }
+.admin-app #admin-pagenotfound-btn { border: 1px solid rgba(157, 141, 255, .32); color: #e9e5ff; background: #574ca6; }
+.admin-app .signup-maindiv {
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+  border-radius: 16px;
+  background: linear-gradient(145deg, #1a2337, #151d2e);
+  box-shadow: 0 18px 50px rgba(1, 4, 12, .25);
+}
+.admin-app .signup-upperdiv h2 { color: #f0f2f9; font-size: 23px; font-weight: 650; letter-spacing: -.035em; }
+.admin-app .signup-middlediv label { color: #b8c1d4; font-size: 11px; font-weight: 600; }
+.admin-app .signup-middlediv input { min-height: 41px; padding: .65rem .8rem; color: #e2e7f2; border-color: rgba(158, 174, 206, .19); border-radius: 9px; background: #141c2c; font-size: 12px; }
+.admin-app .signup-middlediv button { padding: .65rem 1.2rem; border: 1px solid #6f62cc; border-radius: 9px; color: #f1efff; background: linear-gradient(135deg, #7365d6, #5b4db5); font-size: 12px; box-shadow: none; }
+.admin-app .signup-middlediv button:hover { background: #8173e5; }
+.admin-app .signup-middlediv .password-field span { color: #9b8cff; }
+.admin-app .otp-form .otp-container input { width: 220px; min-height: 48px; text-align: center; font-size: 18px; letter-spacing: .2em; }
+.admin-app .otp-form + p strong { color: #d5cdff; }
+
+@media (max-width: 1000px) {
+  .admin-app .admin-main { padding: 27px 23px 45px; }
+  .admin-app .admin-sidebar { width: 224px; flex-basis: 224px; }
+}
+@media (max-width: 760px) {
+  .admin-app .admin-layout { display: block; min-height: calc(100vh - 66px); }
+  .admin-app .admin-main { padding: 23px 16px 38px; }
+  .admin-app .admin-main .container { padding: 0; }
+  .admin-app .admin-main .row { --bs-gutter-x: 12px; }
+  .admin-app .signup-maindiv { padding: 17px; }
+  .admin-app .first-row-form,
+  .admin-app .password-main-div { flex-direction: column; }
+  .admin-app .username-field-div,
+  .admin-app .email-field-div,
+  .admin-app .password-div-first { width: 100%; margin-right: 0; }
+  .admin-app .signup-middlediv label { margin-top: 1rem; }
+}
