@@ -112,5 +112,3 @@ Starter Login Credentials : (Make sure to import database collections i.e. userd
 **Frontend :** React, Bootstrap
 
 **Backend :** Node, Express, MongoDB
-
-#### Developed By :- [@MrAalu](https://www.github.com/MrAalu)
