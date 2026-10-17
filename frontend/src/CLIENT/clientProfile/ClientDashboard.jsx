@@ -1,19 +1,27 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { backend_server } from '../../main'
 import axios from 'axios'
-import { Toaster, toast } from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
+import { BsBook, BsClockHistory } from 'react-icons/bs'
+import { Link } from 'react-router-dom'
+
+const formatDate = (date) =>
+  date ? new Date(date).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }) : '—'
 
 const ClientDashboard = ({ userBookData }) => {
   const DELETE_BOOK_API = `${backend_server}/api/v1/requestBooks`
 
   const handleRemoveBook = async (transactionId, issueStatus) => {
     try {
-      const response = await axios.patch(DELETE_BOOK_API, {
+      await axios.patch(DELETE_BOOK_API, {
         id: transactionId,
         issueStatus,
       })
 
-      console.log(response)
       if (issueStatus === 'DELETE') {
         toast.success('Cancel Success')
       } else {
@@ -21,107 +29,103 @@ const ClientDashboard = ({ userBookData }) => {
       }
     } catch (error) {
       console.log(error)
+      toast.error(error.response?.data?.message || 'Unable to update this request')
     }
   }
 
   return (
-    <div className='container my-3'>
-      {/* User Books data table */}
+    <section className='profile-activity'>
+      <header className='profile-panel-heading'>
+        <div>
+          <span className='profile-eyebrow'>YOUR LIBRARY</span>
+          <h2>Reading activity</h2>
+          <p>Requests, loans and returns, all in one place.</p>
+        </div>
+        <span className='profile-panel-mark'><BsBook aria-hidden='true' /></span>
+      </header>
+
       {userBookData.length > 0 ? (
-        <div className='row my-4'>
-          <table className='table table-hover'>
+        <div className='profile-activity-table-wrap'>
+          <table className='table table-hover profile-activity-table'>
             <thead>
               <tr>
-                <th scope='col'>#</th>
-                <th scope='col'>Book Title</th>
-                <th scope='col'>Issue Status</th>
-                <th scope='col'>Issue Date</th>
-                <th scope='col'> Return Due</th>
-                <th scope='col'> Returned Status</th>
-                <th scope='col'>Extra Charge</th>
-                {/* <th scope='col'>Update</th> */}
+                <th scope='col'>Book</th>
+                <th scope='col'>Status</th>
+                <th scope='col'>Requested</th>
+                <th scope='col'>Due date</th>
+                <th scope='col'>Return</th>
+                <th scope='col'>Fine</th>
+                <th scope='col'><span className='visually-hidden'>Actions</span></th>
               </tr>
             </thead>
             <tbody>
-              {userBookData &&
-                userBookData.map((users, index) => {
-                  const {
-                    bookTitle,
-                    _id,
-                    issueStatus,
-                    isReturned,
-                    extraCharge,
-                    issueDate,
-                    returnDate,
-                  } = users
+              {userBookData.map((book) => {
+                const {
+                  bookTitle,
+                  _id,
+                  issueStatus,
+                  isReturned,
+                  extraCharge,
+                  issueDate,
+                  returnDate,
+                } = book
+                const statusClass = String(issueStatus || 'unknown').toLowerCase()
+                let action = null
 
-                  const bookissuedate = new Date(issueDate).toDateString()
+                if (issueStatus === 'PENDING' || issueStatus === 'READY') {
+                  action = {
+                    label: 'Cancel',
+                    status: 'DELETE',
+                    className: 'profile-row-action is-cancel',
+                  }
+                } else if (issueStatus === 'RETURNED') {
+                  action = {
+                    label: 'Remove',
+                    status: 'ALREADYRETURNED',
+                    className: 'profile-row-action',
+                  }
+                } else if (issueStatus === 'CANCELLED') {
+                  action = {
+                    label: 'Remove',
+                    status: 'ADMINCANCELLED',
+                    className: 'profile-row-action',
+                  }
+                }
 
-                  const returnOrNot = isReturned === true ? 'True' : 'False'
-
-                  const updatedReturnDate =
-                    returnDate === null
-                      ? 'NONE'
-                      : new Date(returnDate).toDateString()
-                  return (
-                    <tr key={_id}>
-                      <th scope='row'>{index + 1}</th>
-                      <td style={{ width: '250px' }}>{bookTitle}</td>
-                      <td>{issueStatus}</td>
-                      <td>{bookissuedate}</td>
-                      <td>{updatedReturnDate}</td>
-                      <td>{returnOrNot}</td>
-                      <td>Nrs.{extraCharge} /-</td>
-                      {issueStatus === 'PENDING' || issueStatus === 'READY' ? (
-                        <td>
-                          <button
-                            className='btn btn-danger'
-                            onClick={() => handleRemoveBook(_id, 'DELETE')}
-                          >
-                            Cancel
-                          </button>
-                        </td>
-                      ) : (
-                        ''
+                return (
+                  <tr key={_id}>
+                    <td className='profile-book-title'>{bookTitle}</td>
+                    <td><span className={`profile-status is-${statusClass}`}>{issueStatus}</span></td>
+                    <td>{formatDate(issueDate)}</td>
+                    <td>{formatDate(returnDate)}</td>
+                    <td><span className={`profile-return-state${isReturned ? ' is-returned' : ''}`}>{isReturned ? 'Returned' : 'On loan'}</span></td>
+                    <td className='profile-fine'>Nrs. {extraCharge || 0}</td>
+                    <td className='profile-action-cell'>
+                      {action && (
+                        <button
+                          type='button'
+                          className={action.className}
+                          onClick={() => handleRemoveBook(_id, action.status)}
+                        >
+                          {action.label}
+                        </button>
                       )}
-                      {issueStatus === 'RETURNED' ? (
-                        <td>
-                          <button
-                            className='btn btn-dark'
-                            onClick={() =>
-                              handleRemoveBook(_id, 'ALREADYRETURNED')
-                            }
-                          >
-                            Remove
-                          </button>
-                        </td>
-                      ) : (
-                        ''
-                      )}
-                      {issueStatus === 'CANCELLED' ? (
-                        <td>
-                          <button
-                            className='btn btn-dark'
-                            onClick={() =>
-                              handleRemoveBook(_id, 'ADMINCANCELLED')
-                            }
-                          >
-                            Remove
-                          </button>
-                        </td>
-                      ) : (
-                        ''
-                      )}
-                    </tr>
-                  )
-                })}
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
       ) : (
-        <p className='p text-center mt-4'>0 Book Data</p>
+        <div className='profile-empty-state'>
+          <span className='profile-empty-icon'><BsClockHistory aria-hidden='true' /></span>
+          <h3>Your reading list starts here</h3>
+          <p>When you request a book, its pickup and return details will appear here.</p>
+          <Link className='profile-browse-link' to='/books'>Browse the collection <span aria-hidden='true'>→</span></Link>
+        </div>
       )}
-    </div>
+    </section>
   )
 }
 

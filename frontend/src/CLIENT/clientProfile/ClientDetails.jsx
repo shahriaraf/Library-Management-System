@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react'
-import { Button, Modal, Row, Col, Form } from 'react-bootstrap'
+import { Button, Modal, Form } from 'react-bootstrap'
 import { backend_server } from '../../main'
 import axios from 'axios'
 import { Toaster, toast } from 'react-hot-toast'
@@ -146,7 +146,7 @@ const ClientDetails = ({ userData }) => {
   if (!userData) {
     return (
       <div className='container my-3'>
-        <div className='profile-details p-4'>
+        <div className='profile-details-card p-4'>
           <p className='mb-0'>Profile information is unavailable. Please refresh and try again.</p>
         </div>
       </div>
@@ -154,56 +154,66 @@ const ClientDetails = ({ userData }) => {
   }
 
   return (
-    <div className='container my-3'>
-      {/* Image + Userdetails Box Section */}
-      <Row className='align-items-center '>
-        {/* Image Section */}
-        <Col md={4} className='text-center mx-1 my-2'>
-          <div className='profile-details border p-4 shadow'>
-            <img
-              style={{ width: '100px' }}
-              className='img-fluid'
-              src='/clientprofile.png'
-            />
-            <h5 className='mt-3'>{userData.username.toUpperCase()}</h5>
-          </div>
-        </Col>
+    <section className='profile-details-layout'>
+      <header className='profile-panel-heading'>
+        <div>
+          <span className='profile-eyebrow'>MEMBER DETAILS</span>
+          <h2>Personal details</h2>
+          <p>Your contact information and account security.</p>
+        </div>
+      </header>
 
-        {/* Other user INFO */}
-        <Col md={6}>
-          <div className='profile-details border p-4 shadow mx-1 my-2'>
-            <h5>Email: {userData.email}</h5>
-            <hr />
+      <div className='profile-details-grid'>
+        <section className='profile-details-card profile-identity-card'>
+          <img className='profile-detail-avatar' src='/clientprofile.png' alt='' />
+          <span className='profile-member-label'>LIBRARY MEMBER</span>
+          <h3>{userData.username || 'Reader'}</h3>
+          <p>Account details are only visible to you.</p>
+          <div className='profile-member-status'><i /> Active member</div>
+        </section>
 
-            <h5>Phone: {userData.phone}</h5>
-            <hr />
-            <h5>Total Books: {userData.totalAcceptedBooks}</h5>
-          </div>
-        </Col>
-      </Row>
+        <section className='profile-details-card profile-contact-card'>
+          <span className='profile-nav-label'>CONTACT INFORMATION</span>
+          <dl>
+            <div>
+              <dt>Email address</dt>
+              <dd>{userData.email}</dd>
+            </div>
+            <div>
+              <dt>Phone number</dt>
+              <dd>{userData.phone || 'Not provided'}</dd>
+            </div>
+            <div>
+              <dt>Books accepted</dt>
+              <dd>{userData.totalAcceptedBooks ?? 0}</dd>
+            </div>
+          </dl>
+        </section>
+      </div>
 
-      {/* Edit and Change Button */}
-      <Row>
-        <div className='profile-buttons text-center'>
-          {/* Edit PROFILE btn */}
+      <section className='profile-security-card'>
+        <div>
+          <span className='profile-security-kicker'>ACCOUNT SECURITY</span>
+          <h3>Keep your details up to date</h3>
+          <p>Update your contact information or choose a new password.</p>
+        </div>
+        <div className='profile-buttons'>
           <Button
             variant='primary'
             onClick={handleEditModalShow}
-            className='mx-2 my-3'
+            className='profile-edit-button'
           >
-            Edit Profile
+            Edit personal details
           </Button>
 
-          {/* Change PASSWORD btn */}
           <Button
             variant='secondary'
             onClick={handlePasswordModalShow}
-            className='mx-2 my-3'
           >
             Change Password
           </Button>
         </div>
-      </Row>
+      </section>
 
       {/* Edit Profile Modal */}
       <Modal show={showEditModal} onHide={handleEditModalClose} centered>
@@ -346,7 +356,7 @@ const ClientDetails = ({ userData }) => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </section>
   )
 }
 

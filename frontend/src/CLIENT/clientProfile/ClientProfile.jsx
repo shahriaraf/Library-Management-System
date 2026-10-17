@@ -1,35 +1,24 @@
-import React, { useState, useEffect } from 'react'
-import { useLoginState } from '../../LoginState'
-import { Col, Row } from 'react-bootstrap'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { backend_server } from '../../main'
 import ClientDashboard from './ClientDashboard'
 import ClientDetails from './ClientDetails'
 import ClientLogout from '../clientLogout/ClientLogout'
+import { BsBook, BsBoxArrowRight, BsGrid, BsPerson } from 'react-icons/bs'
 import './clientprofile.css'
 
 const ClientProfile = () => {
-  const userLoginState = useLoginState()
-
   const getSingleUser_API_URL = `${backend_server}/api/v1/users/`
 
   const [userBookData, setUserBookData] = useState([])
   const [userData, setUserData] = useState()
+  const [activeSection, setActiveSection] = useState('dashboard')
 
-  // Using post to send Cookie and fetch user data
   const fetchData = async () => {
     try {
       const response = await axios.post(getSingleUser_API_URL, {})
-
-      const bookData = await response.data.bookDataAll
-      const usersData = await response.data.userData
-
-      if (bookData) {
-        setUserBookData(bookData)
-      }
-      if (usersData) {
-        setUserData(usersData)
-      }
+      setUserBookData(response.data.bookDataAll || [])
+      setUserData(response.data.userData)
     } catch (error) {
       console.log(error.response)
       console.log(error)
@@ -40,91 +29,91 @@ const ClientProfile = () => {
     fetchData()
   }, [])
 
-  const [showDashboard, setShowDashboard] = useState(true)
-  const [showProfile, setShowProfile] = useState(false)
-  const [showLogout, setShowLogout] = useState(false)
+  const activeLoans = userBookData.filter(
+    (book) => book.issueStatus === 'ISSUED'
+  ).length
+  const pendingRequests = userBookData.filter(
+    (book) => book.issueStatus === 'PENDING' || book.issueStatus === 'READY'
+  ).length
 
-  const handleOnclickDashboard = () => {
-    setShowDashboard(true)
-    setShowProfile(false)
-    setShowLogout(false)
-  }
-  const handleOnclickProfile = () => {
-    setShowProfile(true)
-    setShowDashboard(false)
-    setShowLogout(false)
-  }
-  const handleOnclickLogout = () => {
-    setShowLogout(true)
-    setShowDashboard(false)
-    setShowProfile(false)
-  }
+  const sections = [
+    { id: 'dashboard', label: 'Reading activity', Icon: BsGrid },
+    { id: 'details', label: 'Personal details', Icon: BsPerson },
+    { id: 'logout', label: 'Sign out', Icon: BsBoxArrowRight },
+  ]
 
   return (
-    <div className='container-fluid client-profile-page'>
-      <section className='client-profile-welcome'>
+    <div className='client-profile-page'>
+      <header className='profile-page-heading'>
         <div>
-          <span className='client-profile-eyebrow'>YOUR READER SPACE</span>
-          <h1>Welcome back{userData?.username ? `, ${userData.username}` : ''}.</h1>
-          <p>Keep track of your books, requests, and account details in one place.</p>
+          <span className='profile-eyebrow'>MEMBER ACCOUNT</span>
+          <h1>Your reading room</h1>
+          <p>A quiet place to keep your library life in order.</p>
         </div>
-        <div className='client-profile-count'>
-          <strong>{userBookData.length}</strong>
-          <span>BOOK RECORDS</span>
+        <div className='profile-member-note'>
+          <span className='profile-member-mark' aria-hidden='true'>R</span>
+          <div>
+            <span className='profile-member-label'>SIGNED IN AS</span>
+            <strong>{userData?.username || 'Reader'}</strong>
+          </div>
+        </div>
+      </header>
+
+      <section className='profile-stat-strip' aria-label='Library activity summary'>
+        <div className='profile-stat'>
+          <span className='profile-stat-icon'><BsBook aria-hidden='true' /></span>
+          <div><strong>{userBookData.length}</strong><span>All requests</span></div>
+        </div>
+        <div className='profile-stat'>
+          <span className='profile-stat-icon'><BsBook aria-hidden='true' /></span>
+          <div><strong>{activeLoans}</strong><span>Currently borrowed</span></div>
+        </div>
+        <div className='profile-stat'>
+          <span className='profile-stat-icon'><BsGrid aria-hidden='true' /></span>
+          <div><strong>{pendingRequests}</strong><span>Awaiting collection</span></div>
         </div>
       </section>
 
-      <Row className='client-sidebar'>
-        {/* Left Bar */}
-        <Col className='col-md-2 client-dashboard-buttons'>
-          <button
-            onClick={handleOnclickDashboard}
-            className={`btn btn-primary my-1 mx-1${showDashboard ? ' is-active' : ''}`}
-            style={{ width: '100%' }}
-          >
-            Dashboard
-          </button>
+      <div className='profile-workspace'>
+        <aside className='profile-rail'>
+          <section className='profile-member-card'>
+            <img src='/clientprofile.png' alt='' />
+            <span className='profile-member-label'>YOUR ACCOUNT</span>
+            <h2>{userData?.username || 'Welcome, reader'}</h2>
+            <p>{userData?.email || 'Your library account'}</p>
+            <span className='profile-member-status'><i /> Active member</span>
+          </section>
 
-          <button
-            onClick={handleOnclickProfile}
-            className={`btn btn-primary my-1 mx-1${showProfile ? ' is-active' : ''}`}
-            style={{ width: '100%' }}
-          >
-            My Details
-          </button>
+          <nav className='profile-navigation' aria-label='Account sections'>
+            <span className='profile-nav-label'>YOUR SPACE</span>
+            {sections.map(({ id, label, Icon }) => (
+              <button
+                key={id}
+                type='button'
+                className={`profile-nav-button${activeSection === id ? ' is-active' : ''}`}
+                aria-pressed={activeSection === id}
+                onClick={() => setActiveSection(id)}
+              >
+                <Icon aria-hidden='true' />
+                <span>{label}</span>
+                {id === 'dashboard' && <span className='profile-nav-count'>{userBookData.length}</span>}
+              </button>
+            ))}
+          </nav>
 
-          <button
-            className={`btn btn-primary my-1 mx-1${showLogout ? ' is-active' : ''}`}
-            onClick={handleOnclickLogout}
-            style={{ width: '100%' }}
-          >
-            Logout
-          </button>
-        </Col>
+          <p className='profile-rail-footnote'>A book is a good place to begin again.</p>
+        </aside>
 
-        {/* Right Bar Page */}
-        {/* Dashboard */}
-
-        {showDashboard && (
-          <Col>
-            <ClientDashboard userBookData={userBookData}></ClientDashboard>
-          </Col>
-        )}
-
-        {/* Profile */}
-        {showProfile && (
-          <Col>
-            <ClientDetails userData={userData}></ClientDetails>
-          </Col>
-        )}
-
-        {/* Logout */}
-        {showLogout && (
-          <Col>
-            <ClientLogout></ClientLogout>
-          </Col>
-        )}
-      </Row>
+        <div className='profile-main-panel'>
+          {activeSection === 'dashboard' && (
+            <ClientDashboard userBookData={userBookData} />
+          )}
+          {activeSection === 'details' && (
+            <ClientDetails userData={userData} />
+          )}
+          {activeSection === 'logout' && <ClientLogout />}
+        </div>
+      </div>
     </div>
   )
 }

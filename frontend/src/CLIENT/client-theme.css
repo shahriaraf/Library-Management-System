@@ -166,37 +166,6 @@
 .client-app .signup-lowerdiv p { margin-bottom: 0; color: var(--muted); font-size: 13px; }
 .client-app .password-field span { color: var(--accent); }
 
-.client-app .client-profile-page { max-width: 1240px; margin: 0 auto; padding-top: 32px; padding-bottom: 48px; }
-.client-profile-welcome {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 152px;
-  overflow: hidden;
-  margin: 0 12px 24px;
-  padding: 27px 32px;
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  background: var(--paper-deep);
-  box-shadow: none;
-}
-.client-profile-eyebrow { color: var(--accent-dark); font-size: 10px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
-.client-profile-welcome h1 { margin: 9px 0 5px; color: var(--ink); font-size: clamp(27px, 2.5vw, 36px); letter-spacing: -.025em; }
-.client-profile-welcome p { margin: 0; color: var(--muted); font-size: 14px; }
-.client-profile-count { min-width: 100px; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 15px; border: 1px solid #c9c1b2; border-radius: 2px; background: rgba(255, 253, 248, .55); }
-.client-profile-count strong { color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 26px; line-height: 1; }
-.client-profile-count span { color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .09em; }
-.client-app .client-sidebar { align-items: flex-start; margin: 0; }
-.client-app .client-sidebar > .client-dashboard-buttons { width: 205px; flex: 0 0 205px; padding: 0 12px; }
-.client-app .client-dashboard-buttons { position: sticky; top: 96px; margin-top: 5px !important; }
-.client-app .client-dashboard-buttons button { width: 100%; min-height: 42px; display: flex; align-items: center; margin: 0 0 7px !important; padding: 0 13px; color: #676b60 !important; border: 1px solid transparent !important; border-radius: 2px; background: transparent !important; font-size: 13px; font-weight: 550; text-align: left; transition: color 150ms ease, background 150ms ease, border-color 150ms ease; }
-.client-app .client-dashboard-buttons button:hover { color: var(--ink) !important; border-color: var(--line) !important; background: #eee8dc !important; }
-.client-app .client-dashboard-buttons button.is-active { color: var(--accent-dark) !important; border-color: var(--line) !important; background: var(--surface) !important; box-shadow: inset 3px 0 var(--accent); }
-.client-app .client-sidebar > .col:not(.client-dashboard-buttons) { min-width: 0; }
-.client-app .profile-details { border: 1px solid var(--line) !important; border-radius: 2px; background: var(--surface); box-shadow: 0 3px 12px rgba(48, 43, 31, .05) !important; }
-.client-app .profile-details h5 { color: var(--ink); font-size: 14px; }
-.client-app .profile-buttons { display: flex; justify-content: center; flex-wrap: wrap; gap: 7px; }
 .client-app .modal-content { color: var(--ink); border: 1px solid var(--line); border-radius: 2px; background: var(--surface); }
 .client-app .modal-header,
 .client-app .modal-footer { border-color: var(--line); }
@@ -215,26 +184,10 @@
 .client-app .pagination .active .page-link { color: #fffaf3; border-color: var(--accent); background: var(--accent); }
 .client-app .pagination .disabled .page-link { color: #aaa596; background: var(--paper-deep); }
 
-@media (max-width: 900px) {
-  .client-app .client-sidebar > .client-dashboard-buttons { width: 170px; flex-basis: 170px; }
-}
 @media (max-width: 767px) {
-  .client-app .client-profile-page { padding-top: 17px; }
-  .client-profile-welcome { min-height: 135px; margin: 0 0 14px; padding: 22px 19px; }
-  .client-profile-count { min-width: 77px; padding: 12px 9px; }
-  .client-profile-count strong { font-size: 22px; }
-  .client-app .client-sidebar > .client-dashboard-buttons { position: static; width: 100%; flex: 0 0 100%; display: flex; gap: 6px; padding: 0 12px; }
-  .client-app .client-dashboard-buttons button { justify-content: center; min-height: 38px; flex: 1; margin: 0 !important; padding: 0 7px; text-align: center; }
-  .client-app .client-sidebar > .col:not(.client-dashboard-buttons) { width: 100%; margin-top: 8px; }
   .client-app .login-maindiv { margin: 30px 16px; width: auto; }
   .client-app .card-img-top { height: 245px !important; }
 }
 @media (max-width: 500px) {
-  .client-app .client-profile-welcome { align-items: flex-start; }
-  .client-profile-welcome p { max-width: 235px; font-size: 12px; }
-  .client-profile-count { position: absolute; right: 15px; bottom: 14px; }
-  .client-profile-welcome h1 { max-width: 240px; font-size: 24px; }
-  .client-app .client-profile-page { padding-left: 12px; padding-right: 12px; }
-  .client-app .client-sidebar > .client-dashboard-buttons { padding: 0; }
   .client-app .card-img-top { height: 190px !important; }
 }

@@ -26,28 +26,20 @@ const ClientLogout = () => {
   }
 
   return (
-    <div className='container'>
-      <div className='row'>
-        <div className='col text-center'>
-          <img
-            className='img-fluid'
-            src='/LogoutImage.jpg'
-            alt=''
-            style={{ width: '300px' }}
-          />
-
-          <h3 className='h3'>are you sure, you want to Logout ? </h3>
-
-          <button className='btn btn-success mx-5 my-3' onClick={handleLogout}>
-            Yes
-          </button>
-
-          <button className='btn btn-secondary' onClick={() => navigate(-1)}>
-            Go Back
-          </button>
-        </div>
+    <section className='profile-logout-confirmation'>
+      <img className='img-fluid' src='/LogoutImage.jpg' alt='' />
+      <span className='profile-eyebrow'>LEAVING THE LIBRARY</span>
+      <h2>Ready to sign out?</h2>
+      <p>Your reading activity will be here when you return.</p>
+      <div className='profile-logout-actions'>
+        <button className='btn btn-primary' onClick={handleLogout}>
+          Sign out
+        </button>
+        <button className='btn btn-secondary' onClick={() => navigate(-1)}>
+          Go back
+        </button>
       </div>
-    </div>
+    </section>
   )
 }
 
