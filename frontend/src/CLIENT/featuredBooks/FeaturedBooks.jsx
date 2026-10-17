@@ -58,11 +58,11 @@ const FeaturedBooks = () => {
 
   return (
     <div className='container'>
-      <h1 className='h1 text-center'>Featured Books</h1>
+      <h1 className='h1'>Explore the collection</h1>
 
       {allFeaturedBooks.length > 0 ? (
         <div>
-          <Row className='text-center mt-4'>
+          <Row className='mt-4'>
             <CategoryButtons
               filterFunction={FilterItems}
               categories={bookCategories}

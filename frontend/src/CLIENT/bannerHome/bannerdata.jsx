@@ -4,14 +4,14 @@ const bannerData = [
   {
     id: 1,
     image: `/BannerOne.jpg`,
-    heading: `Discover new worlds`,
-    paragraph: `Dive into captivating stories. Immerse yourself in a world of imagination and wonders.`,
+    heading: `Find the book you meant to read.`,
+    paragraph: `A thoughtful collection of stories and ideas, ready for your next quiet hour.`,
   },
   {
     id: 2,
     image: `/BannerTwo.jpg`,
-    heading: `Escape through pages`,
-    paragraph: `Explore the vast realms of human wisdom and understanding through the pages of books.`,
+    heading: `A good story is closer than you think.`,
+    paragraph: `See what's on the shelves, check availability, and choose what comes home with you.`,
   },
 ]
 

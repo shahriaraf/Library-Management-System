@@ -1,56 +1,118 @@
-#banner-image {
-  /* max-height: calc(100vh - 60px); */
-  height: 400px;
-  width: 100%;
-  object-fit: cover;
-  opacity: 0.9;
-  filter: brightness(0.3);
-}
-
-/* BANNER LAI full width banako, no white space. incase then,add padding left/right 0 */
-/* parent container-fluid ma p-0 rakhnu parxa */
 .custom-container {
-  margin-left: 0;
-  margin-right: 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 28px 0;
 }
 
-/* carousel img bottom indicators CSS */
-.carousel-indicators button {
-  box-shadow: none;
+.custom-container .carousel,
+.custom-container .carousel-inner,
+.custom-container .carousel-item {
+  height: min(68vw, 590px);
+  min-height: 420px;
+  max-height: 590px;
+  background: #29251f;
 }
 
-/* Bottom text CSS */
-.text-outline-h {
-  color: rgb(252, 252, 252);
-  -webkit-text-stroke: 0.3px black;
-  font-size: 3rem;
-}
-.text-outline-p {
-  color: rgba(255, 255, 255, 0.466);
-  -webkit-text-stroke: 0.1px black;
+#banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .73;
+  filter: sepia(.12) saturate(.8);
 }
 
-@media screen and (max-width: 700px) {
-  .text-outline-h {
-    font-size: 2rem;
-  }
-  .text-outline-p {
-    font-size: 1.3rem;
-  }
+.custom-container .carousel-item::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(24, 24, 20, .8) 0%, rgba(24, 24, 20, .51) 44%, rgba(24, 24, 20, .06) 100%);
+  content: '';
 }
-@media screen and (max-width: 400px) {
-  .text-outline-h {
-    font-size: 1.5rem;
-  }
-  .text-outline-p {
-    font-size: 0.8rem;
-  }
+
+.custom-container .reading-room-caption {
+  z-index: 1;
+  right: auto;
+  bottom: 17%;
+  left: clamp(30px, 8vw, 112px);
+  width: min(650px, 72%);
+  padding: 0;
+  text-align: left;
 }
-@media screen and (max-width: 280px) {
-  .text-outline-h {
-    font-size: 1rem;
-  }
-  .text-outline-p {
-    font-size: 0.5rem;
-  }
+
+.banner-kicker {
+  display: inline-block;
+  margin-bottom: 22px;
+  color: #e8c9a9;
+  font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .19em;
+}
+
+.custom-container .text-outline-h {
+  max-width: 650px;
+  margin: 0 0 15px;
+  color: #fffaf1 !important;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(42px, 6.2vw, 78px);
+  font-weight: 400;
+  letter-spacing: -.045em;
+  line-height: .99;
+  text-shadow: none;
+}
+
+.custom-container .text-outline-p {
+  max-width: 440px;
+  margin-bottom: 25px;
+  color: rgba(255, 250, 241, .83) !important;
+  font-size: 15px !important;
+  font-size: 15px;
+  line-height: 1.7;
+  text-shadow: none;
+}
+
+.client-app .banner-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  padding: 11px 0;
+  color: #fffaf1 !important;
+  border-bottom: 1px solid rgba(255, 250, 241, .65);
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: .025em;
+  text-decoration: none;
+}
+
+.client-app .banner-link span {
+  color: #e8c9a9;
+  font-size: 18px;
+  transition: transform 150ms ease;
+}
+
+.client-app .banner-link:hover span { transform: translateX(4px); }
+.custom-container .carousel-indicators { z-index: 2; justify-content: flex-start; margin-right: 0; margin-left: clamp(30px, 8vw, 112px); }
+.custom-container .carousel-indicators [data-bs-target] { width: 25px; height: 2px; margin-right: 7px; margin-left: 7px; }
+.custom-container .carousel-control-prev,
+.custom-container .carousel-control-next { z-index: 2; width: 7%; }
+
+@media (max-width: 700px) {
+  .custom-container { padding: 12px 12px 0; }
+  .custom-container .carousel,
+  .custom-container .carousel-inner,
+  .custom-container .carousel-item { height: 500px; min-height: 0; }
+  .custom-container .carousel-item::after { background: linear-gradient(90deg, rgba(24, 24, 20, .76), rgba(24, 24, 20, .2)); }
+  .custom-container .reading-room-caption { bottom: 17%; left: 27px; width: calc(100% - 54px); text-align: left; }
+  .banner-kicker { margin-bottom: 17px; font-size: 9px; }
+  .custom-container .text-outline-h { max-width: 520px; font-size: clamp(42px, 10vw, 62px); }
+  .custom-container .text-outline-p { max-width: 390px; font-size: 14px !important; }
+  .custom-container .carousel-indicators { margin-left: 27px; }
+}
+
+@media (max-width: 420px) {
+  .custom-container .carousel,
+  .custom-container .carousel-inner,
+  .custom-container .carousel-item { height: 460px; }
+  .custom-container .reading-room-caption { bottom: 16%; }
+  .custom-container .text-outline-h { font-size: 40px; }
+  .custom-container .text-outline-p { font-size: 13px !important; }
 }

@@ -2,13 +2,14 @@
   position: relative;
   inset: auto;
   margin-top: auto;
-  padding: 28px 0 18px;
-  border-top: 1px solid rgba(157, 171, 202, .12);
-  background: #0c1220;
-  color: #8e9ab3;
+  padding: 30px 0 22px;
+  border-top: 1px solid #30362e;
+  background: #343a31;
+  color: #d0d0c5;
 }
-.client-app .footer h5 { margin-bottom: 12px; color: #dce2ef; font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+
+.client-app .footer h5 { margin-bottom: 13px; color: #f3eee3; font-family: Georgia, "Times New Roman", serif; font-size: 18px; font-weight: 400; }
 .client-app .footer ul { margin-bottom: 0; }
-.client-app .footer li { margin: 0 0 7px; color: #8490a9; font-size: 11px; list-style: none; }
-.client-app .footer a { color: #9ca8c1; text-decoration: none; transition: color 150ms ease; }
-.client-app .footer a:hover { color: #c0b7ff; }
+.client-app .footer li { margin: 0 0 8px; color: #c3c4b9; font-size: 13px; list-style: none; }
+.client-app .footer a { color: #d5d2c7; text-decoration: none; transition: color 150ms ease; }
+.client-app .footer a:hover { color: #f0c29b; }

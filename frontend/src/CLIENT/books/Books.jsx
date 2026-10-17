@@ -39,7 +39,7 @@ const Books = () => {
       {/* Popular Books Heading */}
       <div className='row'>
         <h1 className='h1 mt-3' style={{ textAlign: 'center' }}>
-          Popular Books
+          Most borrowed
         </h1>
 
         {/* Popular Books */}
@@ -52,7 +52,7 @@ const Books = () => {
       <div className='col mt-5 '>
         {/* Browse Collections HEADING */}
         <h1 className='h1' style={{ textAlign: 'center' }}>
-          Browse Collections
+          Browse the shelves
         </h1>
 
         <div className='mt-1'>

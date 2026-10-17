@@ -31,7 +31,7 @@ const RecentlyAddedBooks = () => {
   return (
     <div className='row'>
       <h1 className='h1 mt-3' style={{ textAlign: 'center' }}>
-        Latest Books
+        New to the shelves
       </h1>
 
       {/* Recently added Books */}

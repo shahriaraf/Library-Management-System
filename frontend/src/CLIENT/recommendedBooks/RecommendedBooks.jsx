@@ -34,7 +34,7 @@ const RecommendedBooks = () => {
       {latestBooks.length > 0 ? (
         <div>
           <h1 className='h1 mt-3' style={{ textAlign: 'center' }}>
-            Recommended Books
+            Picked for your shelf
           </h1>
 
           <div className='row mb-3'>

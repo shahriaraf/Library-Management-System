@@ -2,6 +2,7 @@ import React from 'react'
 import './banner.css'
 import Carousel from 'react-bootstrap/Carousel'
 import bannerData from './bannerdata'
+import { Link } from 'react-router-dom'
 
 const BannerHome = () => {
   return (
@@ -15,11 +16,15 @@ const BannerHome = () => {
                 className='img-fluid d-block w-100'
                 id='banner-image'
                 src={image}
-                alt='First slide'
+                alt=''
               />
-              <Carousel.Caption>
-                <h3 className='text-outline-h'>{heading}</h3>
+              <Carousel.Caption className='reading-room-caption'>
+                <span className='banner-kicker'>THE READING ROOM · DHAKA</span>
+                <h1 className='text-outline-h'>{heading}</h1>
                 <p className='text-outline-p'>{paragraph}</p>
+                <Link className='banner-link' to='/books'>
+                  Browse the shelves <span aria-hidden='true'>→</span>
+                </Link>
               </Carousel.Caption>
             </Carousel.Item>
           )
