@@ -52,7 +52,6 @@ const AdminNavbar = () => {
           </div>
         </div>
         <div className='admin-topbar-actions'>
-          <span className='admin-topbar-divider' />
           <span className='admin-avatar' aria-label='Administrator'>A</span>
         </div>
       </div>
