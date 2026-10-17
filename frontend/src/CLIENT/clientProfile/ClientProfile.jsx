@@ -30,7 +30,7 @@ const ClientProfile = () => {
   }, [])
 
   const activeLoans = userBookData.filter(
-    (book) => book.issueStatus === 'ISSUED'
+    (book) => book.issueStatus === 'ACCEPTED' && !book.isReturned
   ).length
   const pendingRequests = userBookData.filter(
     (book) => book.issueStatus === 'PENDING' || book.issueStatus === 'READY'

@@ -98,7 +98,15 @@ const ClientDashboard = ({ userBookData }) => {
                     <td><span className={`profile-status is-${statusClass}`}>{issueStatus}</span></td>
                     <td>{formatDate(issueDate)}</td>
                     <td>{formatDate(returnDate)}</td>
-                    <td><span className={`profile-return-state${isReturned ? ' is-returned' : ''}`}>{isReturned ? 'Returned' : 'On loan'}</span></td>
+                    <td>
+                      {isReturned ? (
+                        <span className='profile-return-state is-returned'>Returned</span>
+                      ) : issueStatus === 'ACCEPTED' ? (
+                        <span className='profile-return-state'>On loan</span>
+                      ) : (
+                        <span className='profile-return-state'>—</span>
+                      )}
+                    </td>
                     <td className='profile-fine'>Nrs. {extraCharge || 0}</td>
                     <td className='profile-action-cell'>
                       {action && (
