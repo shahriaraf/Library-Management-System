@@ -3,6 +3,7 @@ import { backend_server } from '../../main'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useLoginState } from '../../LoginState'
+import toast from 'react-hot-toast'
 
 const ClientLogout = () => {
   const logout_Api_url = `${backend_server}/api/v1/logout`
@@ -19,9 +20,11 @@ const ClientLogout = () => {
       // Clear cookie using API
       await axios.post(logout_Api_url)
 
-      navigate('/', { replace: true })
     } catch (error) {
-      console.log(error.response)
+      console.error('Unable to clear the client session on the server:', error)
+      toast.error('Signed out locally, but the server session could not be cleared.')
+    } finally {
+      navigate('/', { replace: true })
     }
   }
 

@@ -2,26 +2,24 @@ import React from 'react'
 import { backend_server } from '../../main'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { useLoginState } from '../../LoginState'
+import toast from 'react-hot-toast'
 
 const AdminLogout = () => {
   const logout_Api_url = `${backend_server}/api/v1/logout`
 
   const navigate = useNavigate()
 
-  const userLoginState = useLoginState()
-
   const handleLogout = async () => {
+    localStorage.removeItem('userLogState')
+    localStorage.removeItem('userType')
+
     try {
-      localStorage.clear()
-
-      // Clear cookie using API
-      const resp = await axios.post(logout_Api_url)
-      console.log(resp)
-
-      window.location.href = '/'
+      await axios.post(logout_Api_url)
     } catch (error) {
-      console.log(error.response)
+      console.error('Unable to clear the admin session on the server:', error)
+      toast.error('Signed out locally, but the server session could not be cleared.')
+    } finally {
+      window.location.replace('/')
     }
   }
 

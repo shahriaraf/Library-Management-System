@@ -12,9 +12,13 @@ const UserOtpVerificationModel = require('../models/userOtpVerificationModel')
 
 const postUserLogin = async (req, res) => {
   // converting @gmail.com domain into lowercase to match with database
-  const email = await ConvertEmail(req.body.email)
+  const email = typeof req.body.email === 'string'
+    ? req.body.email.trim().toLowerCase()
+    : ''
 
-  const result = await UserModels.findOne({ email: email }).select('+password')
+  const result = await UserModels.findOne({
+    email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'),
+  }).select('+password')
 
   if (!result) {
     return res
@@ -49,21 +53,28 @@ const postUserLogin = async (req, res) => {
     await UserOtpVerificationModel.findOneAndUpdate(
       { userId: userId },
       {
+        userEmail: email,
         otpCode: hashed_otpCode,
         createdAt: new Date(),
         expiresAt: new Date(Date.now() + 1000 * 60),
-      }
+      },
+      { upsert: true, setDefaultsOnInsert: true }
     )
 
     const maskedEmail = await maskEmail(email)
+    const emailSent = await sendEmail(email, otp_Code)
+    if (!emailSent) {
+      return res.status(StatusCodes.SERVICE_UNAVAILABLE).json({
+        success: false,
+        message: 'Your email is not verified, and a verification code could not be sent. Please try again.',
+      })
+    }
 
-    res.status(StatusCodes.BAD_REQUEST).json({
+    return res.status(StatusCodes.BAD_REQUEST).json({
       success: false,
       message: `Email not Verified ! OTP Verification code re-sended to email ${maskedEmail}`,
       ENTER_OTP: true,
     })
-
-    await sendEmail(email, otp_Code)
   }
 
   // Generating json web token on success login
@@ -115,16 +126,6 @@ const postUserLogin = async (req, res) => {
     success: true,
     userType: result.userType,
   })
-}
-
-// Converting @gmail.com to lower
-const ConvertEmail = async (email) => {
-  const emailWithoutSpaces = email.replace(/\s/g, '') // Remove spaces using regular expression
-  const emailParts = emailWithoutSpaces.split('@')
-  const firstEmailPart = emailParts[0]
-  const secondEmailPart = emailParts[1].toLowerCase()
-
-  return (FinalEmail = firstEmailPart + '@' + secondEmailPart)
 }
 
 module.exports = postUserLogin

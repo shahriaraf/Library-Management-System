@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import './login.css'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import { backend_server } from '../../main'
 import { BsEye, BsEyeSlash } from 'react-icons/bs'
 
@@ -29,10 +29,10 @@ const Login = () => {
 
   // Login Form submit
   const HandleSubmit = async (e) => {
+    e.preventDefault()
     const loadingToastId = showLoadingToast()
     try {
-      e.preventDefault()
-      const email = textfield.email
+      const email = textfield.email.trim().toLowerCase()
       const password = textfield.password
 
       const response = await axios.post(API_URL, { email, password })
@@ -51,19 +51,13 @@ const Login = () => {
       }
     } catch (error) {
       toast.dismiss(loadingToastId)
-      // console.log('ERROR : ', error.response)
-
-      if (error.response.data.ENTER_OTP === true) {
+      if (error.response?.data?.ENTER_OTP === true) {
         navigate('/otp', { replace: true })
-      } else if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        // Display the 'if' error message from the backend to frontend
-        const error_message = error.response.data.message
-        // console.log(error_message)
-        toast.error(error_message)
+      } else if (typeof error.response?.data?.message === 'string') {
+        toast.error(error.response.data.message)
+      } else {
+        console.error('Login request failed:', error)
+        toast.error('Unable to log in. Please try again.')
       }
     }
   }
@@ -111,9 +105,17 @@ const Login = () => {
               required
             />
             <span
+              role='button'
+              tabIndex={0}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
               onClick={() =>
                 setShowPassword((prevShowPassword) => !prevShowPassword)
               }
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  setShowPassword((prevShowPassword) => !prevShowPassword)
+                }
+              }}
               style={{ cursor: 'pointer' }}
             >
               {showPassword ? <BsEye /> : <BsEyeSlash />}

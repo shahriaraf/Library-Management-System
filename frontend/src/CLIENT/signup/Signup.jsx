@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import axios from 'axios'
 import './signup.css'
 import { Link, useNavigate } from 'react-router-dom'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import { BsEye, BsEyeSlash } from 'react-icons/bs'
 
 const Signup = () => {
@@ -32,19 +32,18 @@ const Signup = () => {
   }
 
   const HandleFormSubmit = async (e) => {
-    try {
-      e.preventDefault()
-      setLoading(true)
+    e.preventDefault()
+    setLoading(true)
+    let loadingToastId
 
+    try {
       // Validate email format
       const emailRegex = /^[A-Za-z0-9._%+-]+@gmail\.com$/
-      const isValid = emailRegex.test(textField.email)
-      // console.log(isValid)
+      const email = textField.email.trim().toLowerCase()
+      const isValid = emailRegex.test(email)
       if (!isValid) {
-        setLoading(false)
-        return toast('Invalid Email Format', {
-          icon: 'â„¹ï¸',
-        })
+        toast.error('Enter a valid Gmail address.')
+        return
       }
 
       // Validate alphanumeric password with a must Special character
@@ -52,26 +51,20 @@ const Signup = () => {
         /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
       const isPasswordValid = alphanumericRegex.test(textField.password)
       if (!isPasswordValid) {
-        setLoading(false)
-        return toast(
+        toast.error(
           'Password must be alphanumeric and contain at least one special character',
-          {
-            icon: 'â„¹ï¸',
-          }
         )
+        return
       }
 
       if (textField.password !== textField.confirm_password) {
-        setLoading(false)
-        return toast('Password doesnt match', {
-          icon: 'â„¹ï¸',
-        })
+        toast.error("Passwords don't match.")
+        return
       }
 
-      const loadingToastId = showLoadingToast()
+      loadingToastId = showLoadingToast()
 
       const username = textField.username
-      const email = textField.email
       const phone = textField.phone
       const password = textField.password
 
@@ -82,28 +75,22 @@ const Signup = () => {
         password,
       })
 
-      toast.dismiss(loadingToastId)
-
       setTextField(Empty_Form_Field)
-      setLoading(false)
 
-      if (response.data.GOTO_LOGIN == true) {
+      if (response.data.GOTO_LOGIN === true) {
         navigate('/login', { replace: true })
-        toast('Account Already Exists , You can Login ! ', {
-          icon: 'â„¹ï¸',
-        })
+        toast.success('This account already exists. Please log in.')
       } else {
         navigate('/otp', { replace: true })
-        toast(response.data.message, {
-          icon: 'â„¹ï¸',
-        })
+        toast.success(response.data.message || 'Check your email for a verification code.')
       }
     } catch (error) {
-      console.log(error)
-      console.log(error.response)
-      // const userAlreadyExists = error.response.data.message
-      // toast.error(userAlreadyExists)
-      // setErrorFeedback('Invalid Format')
+      console.error('Account signup failed:', error)
+      const message = error.response?.data?.message
+      toast.error(typeof message === 'string' ? message : 'Unable to create your account. Please try again.')
+    } finally {
+      if (loadingToastId) toast.dismiss(loadingToastId)
+      setLoading(false)
     }
   }
 
@@ -209,9 +196,17 @@ const Signup = () => {
                   minLength='5'
                 />
                 <span
+                  role='button'
+                  tabIndex={0}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   onClick={() =>
                     setShowPassword((prevShowPassword) => !prevShowPassword)
                   }
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      setShowPassword((prevShowPassword) => !prevShowPassword)
+                    }
+                  }}
                   style={{ cursor: 'pointer' }}
                 >
                   {showPassword ? <BsEye /> : <BsEyeSlash />}

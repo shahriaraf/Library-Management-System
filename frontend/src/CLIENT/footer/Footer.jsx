@@ -10,9 +10,19 @@ const Footer = () => {
           <div className='col-md-4'>
             <h5 className='h5 mt-3'>Info</h5>
             <ul className='list-unstyled'>
-              <li>Email: info@library.com</li>
-              <li>Phone: +977-9801234568</li>
-              <li>Address: Dhaka, Bangladesh</li>
+              <li>
+                Email: <a href='mailto:info@library.com'>info@library.com</a>
+              </li>
+              <li>
+                Address:{' '}
+                <a
+                  href='https://maps.google.com/?q=Dhaka%2C%20Bangladesh'
+                  target='_blank'
+                  rel='noreferrer'
+                >
+                  Dhaka, Bangladesh
+                </a>
+              </li>
             </ul>
           </div>
           <div className='col-md-4'>
@@ -33,10 +43,14 @@ const Footer = () => {
             <h5 className='h5 mt-3'>Legal</h5>
             <ul className='list-unstyled'>
               <li>
-                <Link to='/about'>Privacy Policy</Link>
+                <a href='mailto:info@library.com?subject=Privacy%20policy%20request'>
+                  Ask about our privacy policy
+                </a>
               </li>
               <li>
-                <Link to='/about'>Terms of Service</Link>
+                <a href='mailto:info@library.com?subject=Terms%20of%20service%20request'>
+                  Ask about our terms of service
+                </a>
               </li>
             </ul>
           </div>

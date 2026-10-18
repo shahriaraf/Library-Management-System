@@ -1,9 +1,15 @@
 import axios from 'axios'
 import React, { useState } from 'react'
+import toast from 'react-hot-toast'
 import { backend_server } from '../../main'
-import { Link } from 'react-router-dom'
 
-const ManageSearchBooks = ({ setAllBooks, bookCategories }) => {
+const ManageSearchBooks = ({
+  setAllBooks,
+  bookCategories,
+  fetchData,
+  setFilterActive,
+  resetPagination,
+}) => {
   const API_URL = `${backend_server}/api/v1/filter`
 
   const empty_field = {
@@ -18,10 +24,12 @@ const ManageSearchBooks = ({ setAllBooks, bookCategories }) => {
   const handleFormSubmit = async (e) => {
     e.preventDefault()
 
-    if (JSON.stringify(filterFields) == JSON.stringify(empty_field)) {
+    if (JSON.stringify(filterFields) === JSON.stringify(empty_field)) {
+      setFilterActive(false)
+      resetPagination()
+      fetchData(1)
       return false
     }
-
     const { title, category, featured, available } = filterFields
     try {
       const response = await axios.get(API_URL, {
@@ -34,9 +42,10 @@ const ManageSearchBooks = ({ setAllBooks, bookCategories }) => {
       })
 
       setAllBooks(response.data.data)
-      // console.log(filterFields)
+      setFilterActive(true)
     } catch (error) {
-      console.log(error.response)
+      console.error('Error filtering books:', error)
+      toast.error('Unable to search books. Please try again.')
     }
   }
 
@@ -61,24 +70,9 @@ const ManageSearchBooks = ({ setAllBooks, bookCategories }) => {
   // TODO : Handle Clear Form Filter
   const handleClearFilters = () => {
     setFilterFields(empty_field)
-
-    // Reset the "Category" select dropdown to the default placeholder option
-    const categorySelect = document.getElementById('categorySelect')
-    if (categorySelect) {
-      categorySelect.selectedIndex = 0
-    }
-
-    // Reset the "Featured" select dropdown to the default placeholder option
-    const featuredSelect = document.getElementById('featuredSelect')
-    if (featuredSelect) {
-      featuredSelect.selectedIndex = 0
-    }
-
-    // Reset the "Available" select dropdown to the default placeholder option
-    const availableSelect = document.getElementById('availableSelect')
-    if (availableSelect) {
-      availableSelect.selectedIndex = 0
-    }
+    setFilterActive(false)
+    resetPagination()
+    fetchData(1)
   }
 
   return (
@@ -86,7 +80,7 @@ const ManageSearchBooks = ({ setAllBooks, bookCategories }) => {
       <div className='row'>
         <div className='col-md-10'>
           <form
-            method='get'
+            onSubmit={handleFormSubmit}
             className='form-inline d-flex justify-content-center'
           >
             {/* Search Filter */}
@@ -104,7 +98,7 @@ const ManageSearchBooks = ({ setAllBooks, bookCategories }) => {
             <select
               id='categorySelect'
               className='form-control mx-1'
-              defaultValue=''
+              value={filterFields.category}
               onChange={handleCategoryChange}
             >
               <option key='' value=''>
@@ -123,7 +117,7 @@ const ManageSearchBooks = ({ setAllBooks, bookCategories }) => {
             <select
               id='featuredSelect'
               className='form-control mx-1'
-              defaultValue='all'
+              value={filterFields.featured}
               onChange={handleFeaturedChange}
             >
               <option key='' value=''>
@@ -141,7 +135,7 @@ const ManageSearchBooks = ({ setAllBooks, bookCategories }) => {
             <select
               id='availableSelect'
               className='form-control mx-1'
-              defaultValue='all'
+              value={filterFields.available}
               onChange={handleAvailableChange}
             >
               <option key='' value=''>
@@ -162,7 +156,6 @@ const ManageSearchBooks = ({ setAllBooks, bookCategories }) => {
               <button
                 type='submit'
                 className='btn btn-success mx-1 my-1'
-                onClick={handleFormSubmit}
               >
                 Search
               </button>
@@ -179,14 +172,6 @@ const ManageSearchBooks = ({ setAllBooks, bookCategories }) => {
           </form>
         </div>
 
-        {/* Add new BOOK */}
-        {/* <div className='col mx-1 my-1'>
-          <Link to='/admin/managebooks/addnewbook'>
-            <button className='btn btn-primary' type='button'>
-              Add new Book
-            </button>
-          </Link>
-        </div> */}
       </div>
     </div>
   )

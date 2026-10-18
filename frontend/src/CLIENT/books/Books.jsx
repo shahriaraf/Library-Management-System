@@ -5,28 +5,31 @@ import SmallBanner from '../bannerHome/SmallBanner'
 import PopularBooks from './PopularBooks'
 import { backend_server } from '../../main'
 import BrowseCollectionBooks from './BrowseCollectionBooks'
-import { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import FilterBooksForm from './FilterBooksForm'
 
 const Books = () => {
-  const API_URL = `${backend_server}/api/v1/book/`
+  const API_URL = `${backend_server}/api/v1/book`
 
   const [bookData, setBookData] = useState([])
-
-  // If 0 results then display false , true = results found , false = 0 search results
-  const [searchResult, setSearchResult] = useState(true)
+  const [loading, setLoading] = useState(true)
 
   // if filterForm is active , disbale pagination else allow paginations
   const [filterActive, setFilterActive] = useState(false)
+  const [paginationResetKey, setPaginationResetKey] = useState(0)
 
-  const fetchData = async (pageNumber) => {
+  const fetchData = async (pageNumber = 1) => {
+    setLoading(true)
     try {
-      const resp = await axios.get(`${API_URL}/?page=${pageNumber}`)
+      const resp = await axios.get(`${API_URL}?page=${pageNumber}`)
       const data = resp.data.data
-      // console.log(data)
       setBookData(data)
     } catch (error) {
-      console.log('Error fetching books collections')
+      console.error('Error fetching books collections:', error)
+      setBookData([])
+      toast.error('Unable to load books. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -59,15 +62,17 @@ const Books = () => {
           {/* FILTER BOOKS SECTION */}
           <FilterBooksForm
             setBookData={setBookData}
-            setSearchResult={setSearchResult}
             setFilterActive={setFilterActive}
+            fetchData={fetchData}
+            resetPagination={() => setPaginationResetKey((key) => key + 1)}
+            setLoading={setLoading}
           ></FilterBooksForm>
         </div>
 
         {/* BROWSE COLLECTIONS BOOKS */}
         <BrowseCollectionBooks
           bookData={bookData}
-          searchResult={searchResult}
+          loading={loading}
         ></BrowseCollectionBooks>
 
         {/* Pagination */}
@@ -75,6 +80,7 @@ const Books = () => {
           <CustomPagination
             fetchData={fetchData}
             filterActive={filterActive}
+            resetKey={paginationResetKey}
           ></CustomPagination>
         </div>
       </div>

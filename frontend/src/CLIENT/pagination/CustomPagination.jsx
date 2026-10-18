@@ -3,25 +3,33 @@ import React, { useEffect, useState } from 'react'
 import Pagination from 'react-bootstrap/Pagination'
 import { backend_server } from '../../main'
 
-const CustomPagination = ({ fetchData, filterActive }) => {
+const CustomPagination = ({ fetchData, filterActive, resetKey }) => {
   const TotalBooksQty_API = `${backend_server}/api/v1/books`
 
   const [activePage, setActivePage] = useState(1)
 
-  const [totalPages, setTotalPages] = useState(null)
+  const [totalPages, setTotalPages] = useState(0)
 
   const handlePageClick = (pageNumber) => {
+    if (pageNumber < 1 || pageNumber > totalPages || pageNumber === activePage) {
+      return
+    }
+
     setActivePage(pageNumber)
 
     fetchData(pageNumber)
   }
 
   useEffect(() => {
+    setActivePage(1)
+  }, [resetKey])
+
+  useEffect(() => {
     const fetchTotalBooksQty = async () => {
       try {
         const response = await axios.get(TotalBooksQty_API)
         const totalHits = response.data.totalHits
-        setTotalPages(Math.ceil(totalHits / 8)) // Use Math.ceil to round up to the nearest integer
+        setTotalPages(Math.ceil(totalHits / 8))
       } catch (error) {
         console.log(error)
       }
@@ -115,7 +123,7 @@ const CustomPagination = ({ fetchData, filterActive }) => {
   return (
     <div>
       {/* if filterForm is active then display null (no pagination) else display Pagination */}
-      {filterActive ? null : (
+      {filterActive || totalPages < 1 ? null : (
         <Pagination>{generatePaginationButtons()}</Pagination>
       )}
     </div>

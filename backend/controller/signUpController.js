@@ -58,35 +58,49 @@ const sendEmail = async (to, otp) => {
     // console.log('Email sent:', info)
   } catch (error) {
     console.error('Error:', error)
+    return false
   }
+
+  return true
 }
 
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
 const postUserSignup = async (req, res) => {
-  const { username, email, phone, userType, password } = req.body
+  const { username, phone, userType, password } = req.body
+  const email = typeof req.body.email === 'string'
+    ? req.body.email.trim().toLowerCase()
+    : ''
 
   // Alphanumeric password validation with Special character
   const alphanumericRegex =
     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
 
-  if (!password.match(alphanumericRegex)) {
+  if (typeof password !== 'string' || !password.match(alphanumericRegex)) {
     return res.status(400).json({
-      success: true,
+      success: false,
       message:
         'Password must be alphanumeric and contain at least one special character.',
     })
   }
 
-  const maskedEmail = await maskEmail(email)
+  if (!email) {
+    return res.status(400).json({
+      success: false,
+      message: 'A valid email address is required.',
+    })
+  }
 
+  const maskedEmail = await maskEmail(email)
   const hashedPassword = await bcrypt.hash(password, 10)
 
   const otp_Code = Math.floor(Math.random() * 9000 + 1000)
-  console.log("n\n OTP CODE : ",otp_Code);
-  
   const hashed_otpCode = await generateOtp(otp_Code)
 
   // Check if user already registered
-  const checkPrevUser = await UserModel.findOne({ email }).select('-password')
+  const checkPrevUser = await UserModel.findOne({
+    email: new RegExp(`^${escapeRegExp(email)}$`, 'i'),
+  }).select('-password')
 
   if (!checkPrevUser || checkPrevUser === null) {
     const result = await UserModel.create({
@@ -112,13 +126,19 @@ const postUserSignup = async (req, res) => {
       expiresAt: new Date(Date.now() + 1000 * 60),
     })
 
-    res.status(200).json({
+    const emailSent = await sendEmail(email, otp_Code)
+    if (!emailSent) {
+      return res.status(503).json({
+        success: false,
+        message: 'Your account was created, but the verification email could not be sent. Please try signing up again to resend the code.',
+      })
+    }
+
+    return res.status(200).json({
       success: true,
       message: `Verify Email ! OTP Verification code sended to email ${maskedEmail}`,
       ENTER_OTP: true,
     })
-
-    await sendEmail(email, otp_Code)
   }
 
   if (checkPrevUser && checkPrevUser.emailVerified == true) {
@@ -138,19 +158,27 @@ const postUserSignup = async (req, res) => {
     await UserOtpVerificationModel.findOneAndUpdate(
       { userId: checkPrevUser.id },
       {
+        userEmail: email,
         otpCode: hashed_otpCode,
         createdAt: new Date(),
         expiresAt: new Date(Date.now() + 1000 * 60),
-      }
+      },
+      { upsert: true, setDefaultsOnInsert: true }
     )
 
-    res.status(200).json({
+    const emailSent = await sendEmail(email, otp_Code)
+    if (!emailSent) {
+      return res.status(503).json({
+        success: false,
+        message: 'The verification email could not be sent. Please try signing up again to resend the code.',
+      })
+    }
+
+    return res.status(200).json({
       success: true,
       message: `Email Already Exists ! Verify Email,OTP Verification code sended to email ${maskedEmail}`,
       ENTER_OTP: true,
     })
-
-    await sendEmail(email, otp_Code)
   }
 }
 
@@ -165,17 +193,23 @@ const verifyEmail = async (req, res) => {
       .json({ success: false, message: `Please enter your OTP Code` })
   }
 
-  const UserOtpData = await UserOtpVerificationModel.findOne({ userId: userId })
+  const UserOtpData = await UserOtpVerificationModel.findOne({ userId })
+
+  if (!UserOtpData) {
+    return res.status(400).json({
+      success: false,
+      message: 'No active verification code was found. Request a new code.',
+    })
+  }
+
+  if (new Date() > UserOtpData.expiresAt) {
+    return res.status(400).json({ success: false, message: `Otp Code Expired` })
+  }
 
   const validateOtp = await bcrypt.compare(userInputOtp, UserOtpData.otpCode)
 
   if (!validateOtp) {
     return res.status(400).json({ success: false, message: `Invalid Otp Code` })
-  }
-
-  // Check if OTP Code has Expired or NOT
-  if (new Date() > UserOtpData.expiresAt) {
-    return res.status(400).json({ success: false, message: `Otp Code Expired` })
   }
 
   await UserModel.findByIdAndUpdate(userId, { emailVerified: true })
@@ -188,7 +222,21 @@ const verifyEmail = async (req, res) => {
 const resendOtpCode = async (req, res) => {
   const userId = req.cookies['otp-cookie']
 
+  if (!userId) {
+    return res.status(400).json({
+      success: false,
+      message: 'Signup session not found. Please sign up again.',
+    })
+  }
+
   const getUserData = await UserModel.findById({ _id: userId })
+
+  if (!getUserData) {
+    return res.status(404).json({
+      success: false,
+      message: 'Account not found. Please sign up again.',
+    })
+  }
 
   if (getUserData.emailVerified == true) {
     return res.status(200).json({
@@ -199,6 +247,33 @@ const resendOtpCode = async (req, res) => {
   }
 
   const getTokenData = await UserOtpVerificationModel.findOne({ userId })
+
+  if (!getTokenData) {
+    const otp_Code = Math.floor(Math.random() * 9000 + 1000)
+    const hashed_otpCode = await generateOtp(otp_Code)
+    await UserOtpVerificationModel.create({
+      userId,
+      userEmail: getUserData.email,
+      otpCode: hashed_otpCode,
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + 1000 * 60),
+    })
+    const maskedEmail = await maskEmail(getUserData.email)
+    const emailSent = await sendEmail(getUserData.email, otp_Code)
+    if (!emailSent) {
+      return res.status(503).json({
+        success: false,
+        message: 'The verification email could not be sent. Please try again.',
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `OTP Verification code re-sent to email ${maskedEmail}`,
+      ENTER_OTP: true,
+    })
+    return
+  }
 
   // OTP Code isnt Expired yet so , dont send another OTP (Handle SPAMS)
   if (new Date() < getTokenData.expiresAt) {
@@ -224,13 +299,19 @@ const resendOtpCode = async (req, res) => {
   const { email } = getUserData
   const maskedEmail = await maskEmail(email)
 
+  const emailSent = await sendEmail(email, otp_Code)
+  if (!emailSent) {
+    return res.status(503).json({
+      success: false,
+      message: 'The verification email could not be sent. Please try again.',
+    })
+  }
+
   res.status(200).json({
     success: true,
     message: `OTP Verification code re-sended to email ${maskedEmail}`,
     ENTER_OTP: true,
   })
-
-  await sendEmail(email, otp_Code)
 }
 
 module.exports = {

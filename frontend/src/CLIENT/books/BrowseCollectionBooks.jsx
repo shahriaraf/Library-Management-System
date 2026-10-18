@@ -4,12 +4,14 @@ import { Link } from 'react-router-dom'
 import './card.css'
 import RequestBook from '../requestBooks/RequestBook'
 
-const BrowseCollectionBooks = ({ bookData, searchResult }) => {
+const BrowseCollectionBooks = ({ bookData, loading }) => {
   const { request_Book } = RequestBook()
 
   return (
     <div className='row mt-3'>
-      {bookData.length > 0 ? (
+      {loading ? (
+        <h5 className='p text-center'>Loading...</h5>
+      ) : bookData.length > 0 ? (
         bookData.map((book) => {
           const { _id, title, image, author, available } = book
 
@@ -64,9 +66,7 @@ const BrowseCollectionBooks = ({ bookData, searchResult }) => {
           )
         })
       ) : (
-        <h5 className='p text-center'>
-          {searchResult ? <p>Loading...</p> : <p>0 Results</p>}
-        </h5>
+        <h5 className='p text-center'>0 Results</h5>
       )}
     </div>
   )

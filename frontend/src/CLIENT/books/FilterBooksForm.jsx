@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { backend_server } from '../../main'
 import axios from 'axios'
+import toast from 'react-hot-toast'
 
 import './filterbooksform.css'
 
-const FilterBooksForm = ({ setBookData, setSearchResult, setFilterActive }) => {
+const FilterBooksForm = ({
+  setBookData,
+  setFilterActive,
+  fetchData,
+  resetPagination,
+  setLoading,
+}) => {
   const API_URL_FILTER = `${backend_server}/api/v1/filter`
   const API_ALLBOOKS_URL = `${backend_server}/api/v1/books`
   const empty_field = {
@@ -23,12 +30,13 @@ const FilterBooksForm = ({ setBookData, setSearchResult, setFilterActive }) => {
   const handleFormSubmit = async (e) => {
     e.preventDefault()
 
-    // Checking if user falsly hit search without making any changes
-    // this fixes -> empty fields search means fetching all data which we dont want
     if (JSON.stringify(filterFields) === JSON.stringify(empty_field)) {
-      return setFilterActive(false)
+      setFilterActive(false)
+      resetPagination()
+      fetchData(1)
+      return
     }
-    setFilterActive(true)
+    setLoading(true)
 
     const { title, category, author, language } = filterFields
     try {
@@ -41,17 +49,14 @@ const FilterBooksForm = ({ setBookData, setSearchResult, setFilterActive }) => {
         },
       })
 
-      let totalHits = response.data.total
-      // console.log(totalHits)
-      if (totalHits == 0) {
-        setSearchResult(false)
-      }
-
-      setBookData(response.data.data)
-      // console.log(filterFields)
+      const books = response.data.data
+      setBookData(books)
+      setFilterActive(true)
     } catch (error) {
-      console.log(error)
-      console.log(error.response)
+      console.error('Error filtering books:', error)
+      toast.error('Unable to search books. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -121,19 +126,16 @@ const FilterBooksForm = ({ setBookData, setSearchResult, setFilterActive }) => {
   // Clears the FORM value and Filter
   const handleClearFilter = () => {
     setFilterFields(empty_field)
-    setCategories([])
-    setAuthor([])
-    setLanguage([])
-
-    // After clearing all FORM Field , we have to refetch all Categories,Author's and Language's
-    fetchAllCategories()
+    setFilterActive(false)
+    resetPagination()
+    fetchData(1)
   }
 
   return (
     <div className='container '>
       <div className='row my-3 justify-content-center'>
         <div className='col-md-8'>
-          <form method='get' className='form-inline d-flex'>
+          <form onSubmit={handleFormSubmit} className='form-inline d-flex'>
             {/* Search Filter */}
             <div className='form-group mx-1 my-1  col-xl-4'>
               <input
@@ -151,7 +153,7 @@ const FilterBooksForm = ({ setBookData, setSearchResult, setFilterActive }) => {
             <div className='form-group mx-1 my-1 col-xl-2'>
               <select
                 className='form-control mx-1'
-                defaultValue=''
+                value={filterFields.category}
                 onChange={handleCategoryChange}
               >
                 <option key='' value=''>
@@ -171,7 +173,7 @@ const FilterBooksForm = ({ setBookData, setSearchResult, setFilterActive }) => {
             <div className='form-group mx-1 my-1 col-xl-2'>
               <select
                 className='form-control mx-1'
-                defaultValue=''
+                value={filterFields.author}
                 onChange={handleAuthorChange}
               >
                 <option key='' value=''>
@@ -191,7 +193,7 @@ const FilterBooksForm = ({ setBookData, setSearchResult, setFilterActive }) => {
             <div className='form-group mx-1 my-1 col-xl-2'>
               <select
                 className='form-control mx-1'
-                defaultValue='all'
+                value={filterFields.language}
                 onChange={handleLanguageChange}
               >
                 <option key='' value=''>
@@ -214,7 +216,6 @@ const FilterBooksForm = ({ setBookData, setSearchResult, setFilterActive }) => {
               <button
                 type='submit'
                 className='btn btn-success mx-1 my-1 '
-                onClick={handleFormSubmit}
               >
                 Search
               </button>

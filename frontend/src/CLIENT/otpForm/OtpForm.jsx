@@ -3,7 +3,7 @@ import './otpform.css'
 import { backend_server } from '../../main'
 import axios from 'axios'
 import { useState } from 'react'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
 const OtpForm = () => {
@@ -21,7 +21,9 @@ const OtpForm = () => {
     })
   }
 
-  const handleVerifyFormSubmit = async () => {
+  const handleVerifyFormSubmit = async (event) => {
+    event?.preventDefault()
+    setLoading(true)
     try {
       const response = await axios.post(OTP_VERIFY_API, { otpCode: otp_code })
 
@@ -29,17 +31,16 @@ const OtpForm = () => {
 
       navigate('/login', { replace: true })
     } catch (error) {
-      console.log(error.response)
-      if (error.response.data.success == false) {
-        // toast.error(error.response.data.message)
-        toast(error.response.data.message, {
-          icon: 'ℹ️',
-        })
-      }
+      console.error('Email verification failed:', error)
+      const message = error.response?.data?.message
+      toast.error(typeof message === 'string' ? message : 'Unable to verify the code. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleResendFormSubmit = async () => {
+  const handleResendFormSubmit = async (event) => {
+    event.preventDefault()
     setLoading(true)
     const loadingToastId = showLoadingToast()
     try {
@@ -51,14 +52,14 @@ const OtpForm = () => {
         icon: 'ℹ️',
       })
 
-      setLoading(false)
     } catch (error) {
-      console.log(error.response)
+      console.error('Unable to resend verification code:', error)
+      const message = error.response?.data?.message
+      toast.error(typeof message === 'string' ? message : 'Unable to resend the code. Please try again.')
+    } finally {
+      toast.dismiss(loadingToastId)
+      setLoading(false)
     }
-  }
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault()
   }
 
   return (
@@ -68,25 +69,31 @@ const OtpForm = () => {
         Enter your <strong>OTP</strong> code :{' '}
       </p>
 
-      <form className='form otp-form' onSubmit={handleFormSubmit}>
+      <form className='form otp-form' onSubmit={handleVerifyFormSubmit}>
         <div className='otp-container'>
           <input
             type='text'
             autoComplete='off'
             className='form-control'
             name='otpCode'
+            inputMode='numeric'
+            pattern='[0-9]{4}'
+            maxLength={4}
+            required
             value={otp_code}
             onChange={(e) => setOtp_code(e.target.value)}
           />
         </div>
         <div className='col m-3'>
           <button
+            type='submit'
             className='btn btn-success m-2'
-            onClick={handleVerifyFormSubmit}
+            disabled={loading}
           >
             Submit
           </button>
           <button
+            type='button'
             className='btn btn-secondary m-2'
             disabled={loading}
             onClick={handleResendFormSubmit}

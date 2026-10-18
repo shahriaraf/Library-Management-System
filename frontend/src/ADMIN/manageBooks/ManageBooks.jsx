@@ -10,21 +10,22 @@ import { Link } from 'react-router-dom'
 
 const ManageBooks = () => {
   const API_URL = `${backend_server}/api/v1/books`
-  const API_SKIPFETCH = `${backend_server}/api/v1/book/`
+  const API_SKIPFETCH = `${backend_server}/api/v1/book`
 
   // If 0 results then display false , true = results found , false = 0 search results
   const [searchResult, setSearchResult] = useState(true)
 
   // if filterForm is active , disbale pagination else allow paginations
   const [filterActive, setFilterActive] = useState(false)
+  const [paginationResetKey, setPaginationResetKey] = useState(0)
 
-  const fetchData = async (pageNumber) => {
+  const fetchData = async (pageNumber = 1) => {
     try {
-      const resp = await axios.get(`${API_SKIPFETCH}/?page=${pageNumber}`)
-      const data = await resp.data.data
+      const resp = await axios.get(`${API_SKIPFETCH}?page=${pageNumber}`)
+      const data = resp.data.data
       setAllBooks(data)
     } catch (error) {
-      console.log('Error fetching books collections', error)
+      console.error('Error fetching books collections:', error)
     }
   }
 
@@ -65,6 +66,9 @@ const ManageBooks = () => {
         <ManageSearchBooks
           setAllBooks={setAllBooks}
           bookCategories={categories}
+          fetchData={fetchData}
+          setFilterActive={setFilterActive}
+          resetPagination={() => setPaginationResetKey((key) => key + 1)}
         />
       </div>
 
@@ -114,6 +118,7 @@ const ManageBooks = () => {
             <CustomPagination
               fetchData={fetchData}
               filterActive={filterActive}
+              resetKey={paginationResetKey}
             ></CustomPagination>
           </div>
         </div>
