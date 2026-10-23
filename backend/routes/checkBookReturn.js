@@ -1,6 +1,7 @@
 const express = require('express')
 const BookTransactionSchema = require('../models/bookTransaction')
 const CheckBookReturnRouter = express.Router()
+const OVERDUE_BOOK_CHARGE_BDT = 100
 
 const runBookReturnCheck = async (req, res) => {
   await checkBookReturn()
@@ -23,7 +24,7 @@ const checkBookReturn = async () => {
     // Update the extraCharge field for overdue transactions
     overdueTransactions.forEach((transaction) => {
       if (transaction.extraCharge === 0) {
-        transaction.extraCharge += 100
+        transaction.extraCharge += OVERDUE_BOOK_CHARGE_BDT
         transaction.save()
       }
     })

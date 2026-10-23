@@ -108,16 +108,18 @@ const ForgotPassword = () => {
           <div className='form-group'>
             <label>Phone:</label>
             <input
-              type='text'
+              type='tel'
               className='form-control'
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               required
               name='phone'
-              pattern='9\d{9}'
-              minLength='10'
-              maxLength='10'
-              autoComplete='off'
+              pattern='01[3-9]\d{8}'
+              title='Enter an 11-digit Bangladesh mobile number starting with 013-019.'
+              minLength='11'
+              maxLength='11'
+              autoComplete='tel'
+              inputMode='numeric'
             />
           </div>
 

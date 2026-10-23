@@ -254,15 +254,18 @@ const ClientDetails = ({ userData }) => {
             <Form.Group controlId='phone'>
               <Form.Label>Phone</Form.Label>
               <Form.Control
-                type='text'
+                type='tel'
                 required
-                placeholder='Enter phone number'
+                placeholder='e.g. 01712345678'
                 name='phone'
                 value={inputFieldNormal.phone}
                 onChange={handleOnChangeNormal}
-                pattern='9\d{9}'
-                minLength='10'
-                maxLength='10'
+                pattern='01[3-9]\d{8}'
+                title='Enter an 11-digit Bangladesh mobile number starting with 013-019.'
+                minLength='11'
+                maxLength='11'
+                autoComplete='tel'
+                inputMode='numeric'
               />
             </Form.Group>
 

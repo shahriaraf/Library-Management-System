@@ -176,7 +176,7 @@ const UserIndividualPage = () => {
                 <th scope='col'>Issue Date</th>
                 <th scope='col'> Return Due</th>
                 <th scope='col'> Returned Status</th>
-                <th scope='col'>Extra Charge</th>
+                <th scope='col'>Extra Charge (BDT)</th>
               </tr>
             </thead>
             <tbody>
@@ -208,7 +208,7 @@ const UserIndividualPage = () => {
                       <td>{bookissuedate}</td>
                       <td>{updateReturnDate}</td>
                       <td>{returnOrNot}</td>
-                      <td>Nrs.{extraCharge} /-</td>
+                      <td>৳{extraCharge}</td>
                     </tr>
                   )
                 })}

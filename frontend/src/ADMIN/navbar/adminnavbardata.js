@@ -1,4 +1,4 @@
-const navbarTitle = 'Library Management System'
+const navbarTitle = 'The Reading Room'
 
 const navbarImage = `/book-min.png`
 

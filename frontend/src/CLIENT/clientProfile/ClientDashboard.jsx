@@ -54,7 +54,7 @@ const ClientDashboard = ({ userBookData }) => {
                 <th scope='col'>Requested</th>
                 <th scope='col'>Due date</th>
                 <th scope='col'>Return</th>
-                <th scope='col'>Fine</th>
+                <th scope='col'>Fine (BDT)</th>
                 <th scope='col'><span className='visually-hidden'>Actions</span></th>
               </tr>
             </thead>
@@ -107,7 +107,7 @@ const ClientDashboard = ({ userBookData }) => {
                         <span className='profile-return-state'>—</span>
                       )}
                     </td>
-                    <td className='profile-fine'>Nrs. {extraCharge || 0}</td>
+                    <td className='profile-fine'>৳{extraCharge || 0}</td>
                     <td className='profile-action-cell'>
                       {action && (
                         <button

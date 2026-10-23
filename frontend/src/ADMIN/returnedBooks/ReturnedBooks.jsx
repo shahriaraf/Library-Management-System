@@ -74,7 +74,7 @@ const ReturnedBooks = () => {
                   <th scope='col'>Book</th>
                   <th scope='col'>Return Due</th>
                   <th scope='col'>Return Status</th>
-                  <th scope='col'>Charge</th>
+                  <th scope='col'>Charge (BDT)</th>
                   <th scope='col'> Update</th>
                 </tr>
               </thead>
@@ -99,7 +99,7 @@ const ReturnedBooks = () => {
                       <td style={{ width: '250px' }}>{bookTitle}</td>
                       <td>{new Date(returnDate).toDateString()}</td>
                       {isReturned ? <td>Returned</td> : <td>Not Returned</td>}
-                      <td>Nrs.{extraCharge}/-</td>
+                      <td>৳{extraCharge}</td>
 
                       <td>
                         <form className='d-flex' onSubmit={handleFormSubmit}>

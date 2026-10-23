@@ -34,14 +34,13 @@ const signUpScheme = mongoose.Schema({
   phone: {
     type: String,
     required: true,
-    minlength: 10,
-    maxlength: 10,
+    minlength: 11,
+    maxlength: 11,
     validate: {
-      // Validating if Phone no. starts with '9' or not
       validator: function (value) {
-        return /^9\d{9}$/.test(value)
+        return /^01[3-9]\d{8}$/.test(value)
       },
-      message: 'Invalid phone number format.',
+      message: 'Enter a valid 11-digit Bangladesh mobile number.',
     },
   },
   userType: {

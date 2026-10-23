@@ -149,17 +149,19 @@ const Signup = () => {
 
           <label htmlFor='phonefield'>Phone No. : </label>
           <input
-            type='text'
-            placeholder='e.g. 98...'
+            type='tel'
+            placeholder='e.g. 01712345678'
             id='phonefield'
             value={textField.phone}
             onChange={HandleOnChange}
             name='phone'
-            autoComplete='off'
+            autoComplete='tel'
+            inputMode='numeric'
             required
-            pattern='9\d{9}'
-            minLength='10'
-            maxLength='10'
+            pattern='01[3-9]\d{8}'
+            title='Enter an 11-digit Bangladesh mobile number starting with 013-019.'
+            minLength='11'
+            maxLength='11'
           />
 
           <div className='password-main-div'>
