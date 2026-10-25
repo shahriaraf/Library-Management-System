@@ -32,13 +32,16 @@ const AdminSignup = () => {
   }
 
   const HandleFormSubmit = async (e) => {
+    let loadingToastId
+
     try {
       e.preventDefault()
       setLoading(true)
 
       // Validate email format
-      const emailRegex = /^[A-Za-z0-9._%+-]+@gmail\.com$/
-      const isValid = emailRegex.test(textField.email)
+      const email = textField.email.trim().toLowerCase()
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      const isValid = emailRegex.test(email)
       // console.log(isValid)
       if (!isValid) {
         setLoading(false)
@@ -61,10 +64,9 @@ const AdminSignup = () => {
         return toast.error('Password doesnt match')
       }
 
-      const loadingToastId = showLoadingToast()
+      loadingToastId = showLoadingToast()
 
       const username = textField.username
-      const email = textField.email
       const phone = textField.phone
       const password = textField.password
 
@@ -76,25 +78,19 @@ const AdminSignup = () => {
         userType: 'admin_user',
       })
 
-      toast.dismiss(loadingToastId)
-
       setTextField(Empty_Form_Field)
-      setLoading(false)
 
-      // Account is already verified
-      if (response.data.GOTO_LOGIN == true) {
-        toast('Account already Exists, Goto LOGIN', {
-          icon: 'â„¹ï¸',
-        })
-      } else {
-        navigate('/admin/otp', { replace: true })
-      }
+      navigate('/login', { replace: true })
+      toast.success(response.data.GOTO_LOGIN
+        ? 'This account already exists. Please log in.'
+        : response.data.message || 'Account created. You can now log in.')
     } catch (error) {
-      console.log(error)
-      console.log(error.response)
-      // const userAlreadyExists = error.response.data.message
-      // toast.error(userAlreadyExists)
-      // setErrorFeedback('Invalid Format')
+      console.error('Admin account signup failed:', error)
+      const message = error.response?.data?.message
+      toast.error(typeof message === 'string' ? message : 'Unable to create the account. Please try again.')
+    } finally {
+      if (loadingToastId) toast.dismiss(loadingToastId)
+      setLoading(false)
     }
   }
 
@@ -140,7 +136,7 @@ const AdminSignup = () => {
               <label htmlFor='emailfield'>Email : </label>
               <input
                 type='email'
-                placeholder='e.g. user@gmail.com'
+                placeholder='e.g. user@example.com'
                 id='emailfield'
                 value={textField.email}
                 onChange={HandleOnChange}

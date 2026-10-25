@@ -2,16 +2,13 @@
 
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const { StatusCodes } = require('http-status-codes')
 
 // SignUp model ma vako scheme use garera login credentials CrossCheck
 const UserModels = require('../models/signUpModel')
 
-// For EMAIL verification
-const { generateOtp, maskEmail, sendEmail } = require('./signUpController')
-const UserOtpVerificationModel = require('../models/userOtpVerificationModel')
-
 const postUserLogin = async (req, res) => {
-  // converting @gmail.com domain into lowercase to match with database
+  // Normalize the email before looking it up in the database.
   const email = typeof req.body.email === 'string'
     ? req.body.email.trim().toLowerCase()
     : ''
@@ -36,45 +33,8 @@ const postUserLogin = async (req, res) => {
       .json({ success: false, message: 'Invalid email or password' })
   }
 
-  // After Email & Password matches then,check if email is verified or not
-  if (result.emailVerified === false) {
-    const userId = result.id
-
-    const otp_Code = Math.floor(Math.random() * 9000 + 1000)
-    const hashed_otpCode = await generateOtp(otp_Code)
-
-    res.cookie('otp-cookie', userId, {
-      path: '/', //1000ms * sec * min * hr ->
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24hr otp cookie that stores userId
-      httpOnly: true,
-      sameSite: 'lax',
-    })
-
-    await UserOtpVerificationModel.findOneAndUpdate(
-      { userId: userId },
-      {
-        userEmail: email,
-        otpCode: hashed_otpCode,
-        createdAt: new Date(),
-        expiresAt: new Date(Date.now() + 1000 * 60),
-      },
-      { upsert: true, setDefaultsOnInsert: true }
-    )
-
-    const maskedEmail = await maskEmail(email)
-    const emailSent = await sendEmail(email, otp_Code)
-    if (!emailSent) {
-      return res.status(StatusCodes.SERVICE_UNAVAILABLE).json({
-        success: false,
-        message: 'Your email is not verified, and a verification code could not be sent. Please try again.',
-      })
-    }
-
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      success: false,
-      message: `Email not Verified ! OTP Verification code re-sended to email ${maskedEmail}`,
-      ENTER_OTP: true,
-    })
+  if (!result.emailVerified) {
+    await UserModels.findByIdAndUpdate(result._id, { emailVerified: true })
   }
 
   // Generating json web token on success login

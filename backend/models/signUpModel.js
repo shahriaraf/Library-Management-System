@@ -15,20 +15,16 @@ const signUpScheme = mongoose.Schema({
     unique: [true, 'email already exists'],
 
     validate: {
-      // only accepts @gmail.com in email
       validator: function (value) {
-        // Custom email validation logic
-        // return /^[\w-]+@gmail\.com$/i.test(value)
-        return /^[a-zA-Z0-9._%+-]+@gmail\.com$/i.test(value)
-        // test() method checks value matches or not and returns 'true' and 'false'
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
       },
-      message: 'Invalid email format. Only @gmail.com addresses are allowed.',
+      message: 'Invalid email format.',
     },
   },
 
   emailVerified: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 
   phone: {
@@ -66,7 +62,7 @@ const signUpScheme = mongoose.Schema({
 signUpScheme.pre('save', function (next) {
   this.username = this.username.toLowerCase()
 
-  // Converting only domain `@gmail.com` to lowerCase
+  // Normalize the email domain.
   const emailParts = this.email.split('@')
   const firstEmailPart = emailParts[0]
   const secondEmailPart = emailParts[1].toLowerCase()

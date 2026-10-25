@@ -11,7 +11,7 @@ JWT_LIFE = 30m
 JWT_REFRESH_LIFE = 365d
 
 
-# FOR EMAIL Verification
+# FOR PASSWORD RESET AND EMAIL-CHANGE MESSAGES
 
 EMAIL_USERNAME = Enter your Gmail Account EMAIL here
 EMAIL_PASSWORD = Enter your Gmail Account 'APP Password' ! not normal login password

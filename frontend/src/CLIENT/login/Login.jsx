@@ -51,9 +51,7 @@ const Login = () => {
       }
     } catch (error) {
       toast.dismiss(loadingToastId)
-      if (error.response?.data?.ENTER_OTP === true) {
-        navigate('/otp', { replace: true })
-      } else if (typeof error.response?.data?.message === 'string') {
+      if (typeof error.response?.data?.message === 'string') {
         toast.error(error.response.data.message)
       } else {
         console.error('Login request failed:', error)

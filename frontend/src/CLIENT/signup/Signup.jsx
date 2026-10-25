@@ -38,11 +38,11 @@ const Signup = () => {
 
     try {
       // Validate email format
-      const emailRegex = /^[A-Za-z0-9._%+-]+@gmail\.com$/
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       const email = textField.email.trim().toLowerCase()
       const isValid = emailRegex.test(email)
       if (!isValid) {
-        toast.error('Enter a valid Gmail address.')
+        toast.error('Enter a valid email address.')
         return
       }
 
@@ -81,8 +81,8 @@ const Signup = () => {
         navigate('/login', { replace: true })
         toast.success('This account already exists. Please log in.')
       } else {
-        navigate('/otp', { replace: true })
-        toast.success(response.data.message || 'Check your email for a verification code.')
+        navigate('/login', { replace: true })
+        toast.success(response.data.message || 'Account created. You can now log in.')
       }
     } catch (error) {
       console.error('Account signup failed:', error)
@@ -136,7 +136,7 @@ const Signup = () => {
               <label htmlFor='emailfield'>Email : </label>
               <input
                 type='email'
-                placeholder='e.g. user@gmail.com'
+                placeholder='e.g. user@example.com'
                 id='emailfield'
                 value={textField.email}
                 onChange={HandleOnChange}

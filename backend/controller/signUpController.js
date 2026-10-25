@@ -84,102 +84,46 @@ const postUserSignup = async (req, res) => {
     })
   }
 
-  if (!email) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({
       success: false,
       message: 'A valid email address is required.',
     })
   }
 
-  const maskedEmail = await maskEmail(email)
   const hashedPassword = await bcrypt.hash(password, 10)
-
-  const otp_Code = Math.floor(Math.random() * 9000 + 1000)
-  const hashed_otpCode = await generateOtp(otp_Code)
 
   // Check if user already registered
   const checkPrevUser = await UserModel.findOne({
     email: new RegExp(`^${escapeRegExp(email)}$`, 'i'),
   }).select('-password')
 
-  if (!checkPrevUser || checkPrevUser === null) {
-    const result = await UserModel.create({
-      username,
-      email,
-      password: hashedPassword,
-      phone,
-      userType,
-    })
-
-    res.cookie('otp-cookie', result.id, {
-      path: '/', //1000ms * sec * min * hr ->
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24hr otp cookie that stores userId
-      httpOnly: true,
-      sameSite: 'lax',
-    })
-
-    await UserOtpVerificationModel.create({
-      userId: result.id,
-      userEmail: result.email,
-      otpCode: hashed_otpCode,
-      createdAt: new Date(),
-      expiresAt: new Date(Date.now() + 1000 * 60),
-    })
-
-    const emailSent = await sendEmail(email, otp_Code)
-    if (!emailSent) {
-      return res.status(503).json({
-        success: false,
-        message: 'Your account was created, but the verification email could not be sent. Please try signing up again to resend the code.',
+  if (checkPrevUser) {
+    if (!checkPrevUser.emailVerified) {
+      await UserModel.findByIdAndUpdate(checkPrevUser.id, {
+        emailVerified: true,
       })
     }
-
-    return res.status(200).json({
-      success: true,
-      message: `Verify Email ! OTP Verification code sended to email ${maskedEmail}`,
-      ENTER_OTP: true,
-    })
-  }
-
-  if (checkPrevUser && checkPrevUser.emailVerified == true) {
     return res.status(200).json({
       success: true,
       message: `Account already Exists, Goto Login`,
       GOTO_LOGIN: true,
     })
-  } else if (checkPrevUser && checkPrevUser.emailVerified == false) {
-    res.cookie('otp-cookie', checkPrevUser.id, {
-      path: '/', //1000ms * sec * min * hr ->
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24hr otp cookie that stores userId
-      httpOnly: true,
-      sameSite: 'lax',
-    })
-
-    await UserOtpVerificationModel.findOneAndUpdate(
-      { userId: checkPrevUser.id },
-      {
-        userEmail: email,
-        otpCode: hashed_otpCode,
-        createdAt: new Date(),
-        expiresAt: new Date(Date.now() + 1000 * 60),
-      },
-      { upsert: true, setDefaultsOnInsert: true }
-    )
-
-    const emailSent = await sendEmail(email, otp_Code)
-    if (!emailSent) {
-      return res.status(503).json({
-        success: false,
-        message: 'The verification email could not be sent. Please try signing up again to resend the code.',
-      })
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: `Email Already Exists ! Verify Email,OTP Verification code sended to email ${maskedEmail}`,
-      ENTER_OTP: true,
-    })
   }
+
+  await UserModel.create({
+    username,
+    email,
+    password: hashedPassword,
+    phone,
+    userType,
+    emailVerified: true,
+  })
+
+  return res.status(201).json({
+    success: true,
+    message: 'Account created successfully. You can now log in.',
+  })
 }
 
 const verifyEmail = async (req, res) => {
