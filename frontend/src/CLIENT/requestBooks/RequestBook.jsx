@@ -20,14 +20,13 @@ const RequestBook = () => {
       navigate("/login", { replace: true });
     } else {
       try {
-        const response = await axios.post(Request_API_URL, {
+        await axios.post(Request_API_URL, {
           bookId: book_id,
         });
-        console.log(response);
+        window.dispatchEvent(new Event('library:book-transaction-updated'));
         toast.success("Book Requested successfully");
       } catch (error) {
-        console.log(error.response);
-        const message = error.response.data.message;
+        const message = error.response?.data?.message || 'Unable to request this book';
         toast(message, { icon: "ℹ️" });
       }
     }

@@ -12,7 +12,7 @@ const formatDate = (date) =>
     day: 'numeric',
   }) : '—'
 
-const ClientDashboard = ({ userBookData }) => {
+const ClientDashboard = ({ userBookData, onTransactionsChanged }) => {
   const DELETE_BOOK_API = `${backend_server}/api/v1/requestBooks`
 
   const handleRemoveBook = async (transactionId, issueStatus) => {
@@ -21,6 +21,7 @@ const ClientDashboard = ({ userBookData }) => {
         id: transactionId,
         issueStatus,
       })
+      await onTransactionsChanged?.()
 
       if (issueStatus === 'DELETE') {
         toast.success('Cancel Success')

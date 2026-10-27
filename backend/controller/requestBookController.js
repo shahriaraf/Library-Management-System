@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const BookTransaction = require("../models/bookTransaction");
 const BookSchema = require("../models/bookScheme");
 const PopularBookSchema = require("../models/PopularBooks");
@@ -11,6 +12,10 @@ const postBooks = async (req, res) => {
   const username = req.username;
   const userEmail = req.userEmail;
   const { bookId } = req.body;
+
+  if (!bookId || !mongoose.isValidObjectId(bookId)) {
+    return res.status(400).json({ success: false, message: "Invalid book ID" });
+  }
 
   // Does user have any un returned Books ? if yes,then Block the FEATURE to REQUEST books
   let hasAnyUnreturnedBooks = false;
@@ -32,8 +37,11 @@ const postBooks = async (req, res) => {
 
   // User can request upto 5 Books
   const getUserData = await UserSchema.findById(userId);
+  if (!getUserData) {
+    return res.status(404).json({ success: false, message: "User not found" });
+  }
   // Users total books requested
-  const { totalRequestedBooks } = getUserData;
+  const totalRequestedBooks = Number(getUserData.totalRequestedBooks || 0);
 
   if (totalRequestedBooks >= 5) {
     return res.status(400).json({
@@ -44,6 +52,9 @@ const postBooks = async (req, res) => {
 
   // Book title fetch
   const bookDetails = await BookSchema.findById(bookId);
+  if (!bookDetails) {
+    return res.status(404).json({ success: false, message: "Book not found" });
+  }
   const { title } = bookDetails;
 
   // Check if user has previously requested for same book with id
@@ -78,9 +89,8 @@ const postBooks = async (req, res) => {
     });
 
     // Update users total requested books on 'UserDetails' collection
-    const updatedTotalRequestedBooks = totalRequestedBooks + 1;
     await UserSchema.findByIdAndUpdate(userId, {
-      totalRequestedBooks: updatedTotalRequestedBooks,
+      $inc: { totalRequestedBooks: 1 },
     });
 
     return res.status(200).json({ success: true, data: result });

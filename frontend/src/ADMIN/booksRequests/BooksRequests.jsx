@@ -10,7 +10,7 @@ const BooksRequests = () => {
   const [pendingBooks, setPendingBooks] = useState([])
 
   // Stored selected IssueStatus from FORM
-  const [bookIssueStatus, setBookIssueStatus] = useState()
+  const [selectedStatuses, setSelectedStatuses] = useState({})
   const [isAnyBooksPending, setIsAnyBooksPending] = useState(true)
 
   const fetchPendingBooks = async () => {
@@ -19,12 +19,9 @@ const BooksRequests = () => {
 
       // console.log(response)
 
-      const totalHits = response.data.totalHits
-      if (totalHits == 0) {
-        setIsAnyBooksPending(false)
-      } else {
-        setPendingBooks(response.data.data)
-      }
+      const requests = response.data.data || []
+      setPendingBooks(requests)
+      setIsAnyBooksPending(requests.length > 0)
     } catch (error) {
       console.log(error.response)
     }
@@ -32,6 +29,15 @@ const BooksRequests = () => {
 
   useEffect(() => {
     fetchPendingBooks()
+
+    const refreshRequests = () => fetchPendingBooks()
+    const refreshInterval = window.setInterval(refreshRequests, 15000)
+    window.addEventListener('focus', refreshRequests)
+
+    return () => {
+      window.clearInterval(refreshInterval)
+      window.removeEventListener('focus', refreshRequests)
+    }
   }, [])
 
   // FORM
@@ -39,22 +45,24 @@ const BooksRequests = () => {
     e.preventDefault()
   }
 
-  const handleFormUpdate = async (transactionId) => {
+  const handleFormUpdate = async (transactionId, currentStatus) => {
     try {
-      const response = await axios.patch(Pending_Book_API_Url, {
+      await axios.patch(Pending_Book_API_Url, {
         id: transactionId,
-        issueStatus: bookIssueStatus,
+        issueStatus: selectedStatuses[transactionId] || currentStatus,
       })
       toast.success('Update Success')
-      fetchPendingBooks()
+      await fetchPendingBooks()
     } catch (error) {
       console.log(error.response)
     }
   }
 
-  const handleSelectChange = (e) => {
-    const selectedIssueStatus = e.target.value
-    setBookIssueStatus(selectedIssueStatus)
+  const handleSelectChange = (transactionId, e) => {
+    setSelectedStatuses((statuses) => ({
+      ...statuses,
+      [transactionId]: e.target.value,
+    }))
   }
 
   return (
@@ -92,9 +100,8 @@ const BooksRequests = () => {
                         <form className='d-flex' onSubmit={handleFormSubmit}>
                           <select
                             className='form-control mx-1'
-                            // defaultValue='PENDING'
-                            defaultValue={issueStatus.toUpperCase()}
-                            onChange={handleSelectChange}
+                            value={selectedStatuses[_id] || issueStatus.toUpperCase()}
+                            onChange={(e) => handleSelectChange(_id, e)}
                           >
                             <option key='PENDING' value='PENDING'>
                               PENDING
@@ -110,8 +117,9 @@ const BooksRequests = () => {
                             </option>
                           </select>
                           <button
+                            type='button'
                             className='btn btn-success mx-1'
-                            onClick={() => handleFormUpdate(_id)}
+                            onClick={() => handleFormUpdate(_id, issueStatus)}
                           >
                             Update
                           </button>

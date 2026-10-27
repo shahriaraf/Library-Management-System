@@ -13,20 +13,40 @@ const ClientProfile = () => {
   const [userBookData, setUserBookData] = useState([])
   const [userData, setUserData] = useState()
   const [activeSection, setActiveSection] = useState('dashboard')
+  const [profileLoading, setProfileLoading] = useState(true)
+  const [profileLoadError, setProfileLoadError] = useState(false)
 
   const fetchData = async () => {
     try {
       const response = await axios.post(getSingleUser_API_URL, {})
-      setUserBookData(response.data.bookDataAll || [])
+      if (!response.data?.success || !response.data.userData) {
+        throw new Error('Profile response is missing user data')
+      }
+
+      setUserBookData(Array.isArray(response.data.bookDataAll) ? response.data.bookDataAll : [])
       setUserData(response.data.userData)
+      setProfileLoadError(false)
     } catch (error) {
       console.log(error.response)
       console.log(error)
+      setProfileLoadError(true)
+    } finally {
+      setProfileLoading(false)
     }
   }
 
   useEffect(() => {
     fetchData()
+
+    window.addEventListener('library:book-transaction-updated', fetchData)
+    window.addEventListener('focus', fetchData)
+    const refreshInterval = window.setInterval(fetchData, 15000)
+
+    return () => {
+      window.clearInterval(refreshInterval)
+      window.removeEventListener('library:book-transaction-updated', fetchData)
+      window.removeEventListener('focus', fetchData)
+    }
   }, [])
 
   const activeLoans = userBookData.filter(
@@ -62,15 +82,15 @@ const ClientProfile = () => {
       <section className='profile-stat-strip' aria-label='Library activity summary'>
         <div className='profile-stat'>
           <span className='profile-stat-icon'><BsBook aria-hidden='true' /></span>
-          <div><strong>{userBookData.length}</strong><span>All requests</span></div>
+          <div><strong>{profileLoading ? '…' : profileLoadError ? '—' : userBookData.length}</strong><span>All requests</span></div>
         </div>
         <div className='profile-stat'>
           <span className='profile-stat-icon'><BsBook aria-hidden='true' /></span>
-          <div><strong>{activeLoans}</strong><span>Currently borrowed</span></div>
+          <div><strong>{profileLoading ? '…' : profileLoadError ? '—' : activeLoans}</strong><span>Currently borrowed</span></div>
         </div>
         <div className='profile-stat'>
           <span className='profile-stat-icon'><BsGrid aria-hidden='true' /></span>
-          <div><strong>{pendingRequests}</strong><span>Awaiting collection</span></div>
+          <div><strong>{profileLoading ? '…' : profileLoadError ? '—' : pendingRequests}</strong><span>Awaiting collection</span></div>
         </div>
       </section>
 
@@ -106,10 +126,30 @@ const ClientProfile = () => {
 
         <div className='profile-main-panel'>
           {activeSection === 'dashboard' && (
-            <ClientDashboard userBookData={userBookData} />
+            <ClientDashboard
+              userBookData={userBookData}
+              onTransactionsChanged={fetchData}
+            />
           )}
           {activeSection === 'details' && (
-            <ClientDetails userData={userData} />
+            profileLoading ? (
+              <div className='container my-3'>
+                <div className='profile-details-card p-4'>
+                  <p className='mb-0'>Loading your profile…</p>
+                </div>
+              </div>
+            ) : profileLoadError ? (
+              <div className='container my-3'>
+                <div className='profile-details-card p-4'>
+                  <p className='mb-2'>Unable to load your profile. Your sign-in may have expired.</p>
+                  <button type='button' className='btn btn-outline-secondary' onClick={fetchData}>
+                    Try again
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <ClientDetails userData={userData} />
+            )
           )}
           {activeSection === 'logout' && <ClientLogout />}
         </div>
